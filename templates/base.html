@@ -117,7 +117,8 @@
       </a>
 
       {% block nav %}
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2.5" x-data="{ mobile: false }"
+           @keydown.escape.window="mobile = false">
         {# Anchors are absolute so the nav still works from /login/ and /signup/. #}
         <div class="hidden lg:flex items-center gap-0.5 mr-3">
           <a href="{% url 'home' %}" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For companies</a>
@@ -174,13 +175,53 @@
         </div>
         {% if user.is_authenticated %}
           <a href="{% url 'dashboard' %}" class="px-5 h-11 grid place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition whitespace-nowrap">Open app</a>
-          <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+          <form method="post" action="{% url 'logout' %}" class="hidden sm:block">{% csrf_token %}
             <button class="px-5 h-11 rounded-full bg-ink text-white font-semibold hover:bg-ink/90 transition">Sign out</button>
           </form>
         {% else %}
-          <a href="{% url 'login' %}" class="px-5 h-11 grid place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition whitespace-nowrap">Sign in</a>
+          <a href="{% url 'login' %}" class="hidden sm:grid px-5 h-11 place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition whitespace-nowrap">Sign in</a>
           <a href="{% url 'signup' %}" class="px-5 h-11 grid place-items-center rounded-full bg-ink text-white font-semibold hover:bg-ink/90 transition whitespace-nowrap">Sign up</a>
         {% endif %}
+
+        {% comment %}
+        Below the lg breakpoint the links above are hidden, so without this button
+        a phone visitor has no way to reach any page. The panel is positioned
+        against the sticky header, which is why it spans the full width rather
+        than hanging off this flex row.
+        {% endcomment %}
+        <button type="button" class="lg:hidden w-11 h-11 grid place-items-center rounded-full border border-black/10 hover:bg-black/5 transition"
+                @click="mobile = !mobile" :aria-expanded="mobile" aria-controls="mobile-nav"
+                :aria-label="mobile ? 'Close menu' : 'Open menu'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" :class="mobile && 'hidden'"/>
+            <path d="M5 5l14 14M19 5L5 19" :class="mobile || 'hidden'"/>
+          </svg>
+        </button>
+
+        <div id="mobile-nav" x-cloak :class="mobile ? 'block' : 'hidden'"
+             class="lg:hidden absolute top-full left-0 right-0 bg-white border-b border-black/5 shadow-lg">
+          <div class="mx-auto max-w-7xl px-5 py-4 space-y-1">
+            <a href="{% url 'home' %}" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">For companies</a>
+            <a href="{% url 'creators_page' %}" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">For creators</a>
+            <a href="{% url 'agencies_page' %}" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">For agencies</a>
+            <a href="{% url 'home' %}#how" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">How it works</a>
+
+            <p class="pt-4 px-4 text-[11px] font-bold tracking-widest text-ink/40">RESOURCES</p>
+            <a href="{% url 'blog' %}" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">Blog</a>
+            <a href="{% url 'tools' %}" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">Free Tools</a>
+            <a href="{% url 'case_study' %}" @click="mobile = false" class="block rounded-xl px-4 py-3 font-semibold hover:bg-black/[.04] transition">Case study: BlogSEO</a>
+
+            <div class="pt-4 sm:hidden">
+              {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+                  <button class="w-full h-12 rounded-full bg-ink text-white font-semibold">Sign out</button>
+                </form>
+              {% else %}
+                <a href="{% url 'login' %}" class="h-12 grid place-items-center rounded-full border border-black/10 font-semibold">Sign in</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
       </div>
       {% endblock %}
     </nav>
