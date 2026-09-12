@@ -36,14 +36,24 @@
       <span class="text-sm font-semibold">Trusted by modern B2B teams</span>
     </div>
 
-    <div class="mt-8 flex flex-wrap items-center justify-center gap-x-14 gap-y-6 opacity-40 font-bold text-xl">
-      <span>gojiberry</span><span>ChatSEO</span><span>Abyssale</span>
-      <span class="hidden md:inline">lemlist</span><span class="hidden md:inline">folk.</span>
+    {% comment %}
+    The second pass is aria-hidden: it exists to make the loop seamless, and a
+    screen reader should not hear the same customers twice.
+    {% endcomment %}
+    <div class="marquee mt-8 -mx-5">
+      <div class="marquee-track">
+        {% for logo in logos %}
+          <span class="px-7 shrink-0 font-bold text-xl text-ink/40 whitespace-nowrap">{{ logo }}</span>
+        {% endfor %}
+        {% for logo in logos %}
+          <span class="px-7 shrink-0 font-bold text-xl text-ink/40 whitespace-nowrap" aria-hidden="true">{{ logo }}</span>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </section>
 
-<section class="bg-white py-20 md:py-28">
+<section id="creators" class="bg-white py-20 md:py-28 scroll-mt-[72px]">
   <div class="mx-auto max-w-7xl px-5">
     <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
       Work with all the best creators.

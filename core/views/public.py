@@ -47,6 +47,11 @@ def _stat(value, label, style="compact"):
     return {"value": value, "style": style, "display": f"{display}+", "label": label}
 
 
+# Wordmarks for the social-proof marquee. Naano shows real customer logos; these
+# are set as text because shipping other companies' trademarks into a clone is
+# not a thing to do casually.
+LOGOS = ["La Growth Machine", "gojiberry", "ChatSEO", "Abyssale", "BlogSEO", "lemlist", "folk."]
+
 STATS = [
     _stat(5_000_000, "Impressions generated"),
     _stat(30_000, "Leads generated"),
@@ -66,6 +71,7 @@ def home(request):
         "creators": creators,
         "steps": HOW_IT_WORKS,
         "stats": STATS,
+        "logos": LOGOS,
     })
 
 
