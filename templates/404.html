@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Page not found | Naano{% endblock %}
+
+{% block content %}
+<section class="cloudscape min-h-[calc(100vh-72px)] grid place-items-center px-5 py-20 text-center">
+  <div>
+    <p class="text-sm font-bold tracking-widest text-ink/40">404</p>
+    <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)] font-extrabold tracking-[-0.035em]">
+      That page isn't here.
+    </h1>
+    <p class="mt-5 max-w-md mx-auto text-lg text-ink/60">
+      The link may be out of date, or the campaign may belong to another account.
+    </p>
+    <a href="{% url 'home' %}"
+       class="mt-9 inline-flex items-center gap-3 bg-ink text-white rounded-full px-8 h-14 font-bold text-lg hover:bg-ink/90 transition">
+      Back to home <span>&rarr;</span>
+    </a>
+  </div>
+</section>
+{% endblock %}
