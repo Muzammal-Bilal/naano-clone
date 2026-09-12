@@ -42,20 +42,53 @@
     {% endcomment %}
     <div class="marquee mt-8 -mx-5">
       <div class="marquee-track">
-        {% for logo in logos %}
-          <span class="px-7 shrink-0 font-bold text-xl text-ink/40 whitespace-nowrap">{{ logo }}</span>
+        {% for name, cased in logos %}
+          <span class="px-7 shrink-0 flex items-center gap-2 whitespace-nowrap">
+            <span class="font-bold text-xl text-ink/40">{{ name }}</span>
+            {% if cased %}
+              <a href="{% url 'case_study' %}"
+                 class="text-[9px] font-bold tracking-widest bg-ink text-white rounded-full px-2 py-1 hover:bg-ink/80 transition">CASE STUDY</a>
+            {% endif %}
+          </span>
         {% endfor %}
-        {% for logo in logos %}
-          <span class="px-7 shrink-0 font-bold text-xl text-ink/40 whitespace-nowrap" aria-hidden="true">{{ logo }}</span>
+        {% for name, cased in logos %}
+          <span class="px-7 shrink-0 flex items-center gap-2 whitespace-nowrap" aria-hidden="true">
+            <span class="font-bold text-xl text-ink/40">{{ name }}</span>
+            {% if cased %}
+              <span class="text-[9px] font-bold tracking-widest bg-ink text-white rounded-full px-2 py-1">CASE STUDY</span>
+            {% endif %}
+          </span>
         {% endfor %}
       </div>
     </div>
+
+    {% comment %}
+    The live site puts this quote directly under the customer logos, where it
+    reads as the caption to them rather than as a separate testimonial section.
+    {% endcomment %}
+    <figure class="mt-16 max-w-3xl mx-auto">
+      <blockquote class="text-xl md:text-2xl font-bold tracking-[-0.02em] leading-snug text-ink/85">
+        &ldquo;{{ testimonial.quote }}&rdquo;
+      </blockquote>
+      <figcaption class="mt-6 flex items-center justify-center gap-3.5">
+        <span class="w-11 h-11 rounded-full bg-ink text-white grid place-items-center font-extrabold">
+          {{ testimonial.name|slice:":1" }}
+        </span>
+        <span class="text-left text-sm">
+          <strong class="block">{{ testimonial.name }}</strong>
+          <span class="text-ink/55">{{ testimonial.role }} &middot; {{ testimonial.company }}</span>
+        </span>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
 <section id="creators" class="bg-white py-20 md:py-28 scroll-mt-[72px]">
   <div class="mx-auto max-w-7xl px-5">
-    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+    <p class="text-center text-[11px] font-bold tracking-widest text-ink/40">
+      THE NAANO CREATOR MARKETPLACE
+    </p>
+    <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
       Work with all the best creators.
     </h2>
     <p class="mt-5 mx-auto max-w-2xl text-center text-lg text-ink/60">
@@ -63,9 +96,21 @@
       collaboration from one place.
     </p>
 
-    <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {% comment %}
+    A browser chrome around the creator grid, the way the live site frames it.
+    The bar is decoration, so it is hidden from assistive tech rather than read
+    out as if it were a real address bar.
+    {% endcomment %}
+    <div class="mt-10 flex justify-center" aria-hidden="true">
+      <span class="inline-flex items-center gap-2 bg-black/[.04] rounded-full px-4 py-2 text-sm font-mono text-ink/50">
+        <span class="w-2 h-2 rounded-full bg-ink/20"></span>
+        naano.co/marketplace
+      </span>
+    </div>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {% for creator in creators %}
-        {% include "partials/creator_card.html" with creator=creator score=creator.preview_score %}
+        {% include "partials/creator_card.html" with creator=creator %}
       {% empty %}
         <p class="col-span-full text-center text-ink/40 py-16">
           No creators yet. Run <code class="font-mono text-sm">manage.py seed_demo</code>.
@@ -85,6 +130,14 @@
       <div>
         <p class="text-3xl font-extrabold">Matched to your buyers</p>
         <p class="mt-2 text-ink/60">Audience fit comes before follower count.</p>
+        <div class="mt-4 flex flex-wrap justify-center gap-2">
+          {% for label, share in audience %}
+            <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold
+                         {% if share %}bg-ink text-white{% else %}bg-black/[.05] text-ink/65{% endif %}">
+              {{ label }}{% if share %}<span class="tabular-nums">{{ share }}</span>{% endif %}
+            </span>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
@@ -193,9 +246,10 @@
         <div class="mt-5 bg-black/[.03] rounded-xl p-4">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-ink/55">Payment scheduled</span>
-            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 rounded-full px-2 py-0.5">HANDLED</span>
+            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 rounded-full px-2 py-0.5">Handled by Naano</span>
           </div>
-          <p class="mt-2 text-2xl font-extrabold tabular-nums">&euro;1,240</p>
+          <p class="mt-3 text-[10px] font-bold tracking-widest text-ink/40">CREATOR PAYOUT</p>
+          <p class="mt-0.5 text-2xl font-extrabold tabular-nums">&euro;1,240</p>
           <div class="mt-3 flex gap-1.5 text-[10px] font-bold text-ink/55">
             <span class="bg-white rounded-full px-2.5 py-1">Contract</span>
             <span class="bg-white rounded-full px-2.5 py-1">Invoice</span>
@@ -263,24 +317,23 @@
         <dl class="mt-8 grid grid-cols-3 gap-4 pt-7 border-t border-ink/10">
           {% for value, label in case_study.metrics %}
             <div>
-              <dt class="sr-only">{{ label }}</dt>
               <dd class="text-2xl font-extrabold tracking-tight tabular-nums">{{ value }}</dd>
-              <p class="mt-1 text-xs text-ink/55 leading-snug">{{ label }}</p>
+              <dt class="mt-1 text-xs text-ink/55 leading-snug">{{ label }}</dt>
             </div>
           {% endfor %}
         </dl>
       </div>
     </div>
 
-    <figure class="mt-16 max-w-3xl mx-auto text-center">
-      <blockquote class="text-xl md:text-2xl font-bold tracking-[-0.02em] leading-snug text-ink/85">
-        &ldquo;{{ testimonial.quote }}&rdquo;
-      </blockquote>
-      <figcaption class="mt-6 text-sm text-ink/55">
-        <strong class="text-ink">{{ testimonial.name }}</strong>
-        &middot; {{ testimonial.role }} &middot; {{ testimonial.company }}
-      </figcaption>
-    </figure>
+    <div class="mt-16 flex flex-col sm:flex-row items-center justify-center gap-x-8 gap-y-4">
+      <p class="text-[11px] font-bold tracking-widest text-ink/40">TRUSTED BY TEAMS AT</p>
+      <div class="flex items-center gap-6 flex-wrap justify-center">
+        {% for name, cased in logos %}
+          <span class="font-bold text-ink/35">{{ name }}</span>
+        {% endfor %}
+        <span class="text-sm font-bold bg-ink text-white rounded-full px-3 py-1.5">+30</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -365,7 +418,8 @@
           </p>
 
           <p class="mt-7 text-4xl font-extrabold tracking-tight">
-            {{ plan.price }}<span class="text-base font-semibold {% if plan.featured %}text-white/50{% else %}text-ink/45{% endif %}">{{ plan.period }}</span>
+            {{ plan.price }}
+            <span class="text-base font-semibold {% if plan.featured %}text-white/50{% else %}text-ink/45{% endif %}">{{ plan.period }}</span>
           </p>
 
           <ul class="mt-7 space-y-3 text-sm flex-1">
@@ -398,6 +452,11 @@
       Frequently asked questions.
     </h2>
     <p class="mt-4 text-lg text-ink/60 text-center">Everything you need to know before getting started.</p>
+
+    <p class="mt-6 text-center text-sm text-ink/55">
+      Still have questions?
+      <a href="{% url 'signup' %}" class="font-bold text-ink underline underline-offset-4 hover:text-ink/70">Talk to our team</a>
+    </p>
 
     {% comment %}
     One open panel at a time, tracked by index. aria-expanded and aria-controls
@@ -448,6 +507,7 @@
          class="mt-8 inline-flex items-center gap-3 bg-ink text-white rounded-full px-8 h-14 font-bold text-lg hover:bg-ink/90 transition">
         Book a campaign call <span>&rarr;</span>
       </a>
+      <p class="mt-3 text-sm text-ink/50">Pick a time on the next page.</p>
       <p class="mt-4 text-sm text-ink/50">
         Prefer to start yourself?
         <a href="{% url 'signup' %}" class="font-semibold text-ink hover:underline">Start for free &rarr;</a>

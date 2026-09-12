@@ -5,8 +5,6 @@ from django.shortcuts import redirect, render
 
 from core.forms import SignupForm
 from core.models import Creator, compact
-from core.services import fit_score
-
 HOW_IT_WORKS = [
     {
         "title": "Find creators your buyers trust",
@@ -173,7 +171,16 @@ def _stat(value, label, style="compact"):
 # Wordmarks for the social-proof marquee. Naano shows real customer logos; these
 # are set as text because shipping other companies' trademarks into a clone is
 # not a thing to do casually.
-LOGOS = ["La Growth Machine", "gojiberry", "ChatSEO", "Abyssale", "BlogSEO", "lemlist", "folk."]
+# The flag marks the customers with a published case study; those logos carry a
+# badge in the hero strip and link through, as on the live site.
+LOGOS = [
+    ("La Growth Machine", False), ("gojiberry", False), ("ChatSEO", True),
+    ("Abyssale", False), ("BlogSEO", True), ("lemlist", False), ("folk.", False),
+]
+
+# Audience makeup for the sample creator in the marketplace panel. The leading
+# entry is the headline match, the rest are the buyer roles behind it.
+AUDIENCE = [("AI & SaaS creator", "96%"), ("Founders", ""), ("Sales leaders", ""), ("GTM teams", "")]
 
 STATS = [
     _stat(5_000_000, "Impressions generated"),
@@ -185,16 +192,16 @@ STATS = [
 
 def home(request):
     """Public front door. Must look right to a signed-out visitor."""
-    creators = list(Creator.objects.prefetch_related("topics").order_by("-engagement_rate")[:6])
-    for creator in creators:
-        # No ICP for an anonymous visitor, so this is the creator's baseline fit.
-        creator.preview_score = fit_score(creator, topic_ids=[], countries=[])
+    # A showcase, not a ranking: spread across follower sizes so the strip reads
+    # like the marketplace rather than like six versions of the same creator.
+    creators = Creator.objects.prefetch_related("topics").order_by("-followers")[:6]
 
     return render(request, "public/home.html", {
         "creators": creators,
         "steps": HOW_IT_WORKS,
         "stats": STATS,
         "logos": LOGOS,
+        "audience": AUDIENCE,
         "testimonial": TESTIMONIAL,
         "fit_preview": FIT_PREVIEW,
         "pipeline_preview": PIPELINE_PREVIEW,

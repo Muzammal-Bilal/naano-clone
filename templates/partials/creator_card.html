@@ -27,14 +27,27 @@ grid, so the two never drift apart.
 
     <p class="mt-3 text-xs text-ink/45 leading-relaxed line-clamp-2">{{ creator.bio }}</p>
 
+    {% comment %}
+    Matching is only shown where there is something to match against. A signed-out
+    visitor has no ICP, so the landing page omits the score and shows the topics
+    instead, rather than printing an identical figure on every card.
+    {% endcomment %}
     <div class="mt-auto pt-5">
-      <div class="flex items-center justify-between text-[10px] font-bold tracking-widest text-ink/40">
-        <span>MATCHING</span>
-        <span>{{ score }}/100</span>
-      </div>
-      <div class="mt-1.5 h-1 rounded-full bg-black/5 overflow-hidden">
-        <div class="h-full rounded-full bg-[#2E90FA]" style="width: {{ score }}%"></div>
-      </div>
+      {% if score %}
+        <div class="flex items-center justify-between text-[10px] font-bold tracking-widest text-ink/40">
+          <span>MATCHING</span>
+          <span>{{ score }}/100</span>
+        </div>
+        <div class="mt-1.5 h-1 rounded-full bg-black/5 overflow-hidden">
+          <div class="h-full rounded-full bg-[#2E90FA]" style="width: {{ score }}%"></div>
+        </div>
+      {% else %}
+        <div class="flex flex-wrap justify-center gap-1.5">
+          {% for topic in creator.topics.all %}
+            <span class="text-[10px] font-semibold bg-black/[.04] text-ink/55 rounded-full px-2.5 py-1">{{ topic.name }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   </div>
 

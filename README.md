@@ -39,7 +39,9 @@ Each of these is a decision, not an oversight.
 | Stripe payments and real payouts | The wallet is a ledger that records movement without moving money. Real payments would consume the whole budget for one screen. |
 | Real UTM click tracking | Attribution infrastructure is a product in itself. Metrics are seeded from a decay curve that matches how a post actually behaves. |
 | Checkout and plan upgrades | Both pricing tiers are presented; neither takes payment. Billing is the same Stripe integration cut above. |
-| Blog, SEO pages, help centre | Content surface. No engineering signal. |
+| Video testimonial player | Naano's landing page runs a 2:40 video. There is no video to play here, and a play button that does nothing is worse than not having one, so the quote is rendered as text. |
+| "View post" links on example posts | These point at live LinkedIn posts. Nothing here would be on the other end, so the metrics are shown without a dead link. |
+| Blog, SEO pages, help centre | The three Resources pages are built. The ~20 SEO landing pages behind their footer are content surface with no engineering signal. |
 | Email and notifications | Needs a provider and deliverability setup to demo honestly. |
 | Drag-and-drop pipeline | A dropdown drives the same state machine with far less code, and works on a phone. |
 
