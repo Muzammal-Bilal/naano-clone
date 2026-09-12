@@ -23,3 +23,6 @@ Thumbs.db
 # it is part of the 8x submission and ships publicly with this repo.
 .cursor/hooks/.state/
 !.agent-logs/
+
+# Submission scratch that should not ship with the code.
+docs/walkthrough-script.md
