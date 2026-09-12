@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Django
+*.sqlite3
+/staticfiles/
+/media/
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# Agent capture scratch state only. NEVER ignore .agent-logs/ itself:
+# it is part of the 8x submission and ships publicly with this repo.
+.cursor/hooks/.state/
+!.agent-logs/
