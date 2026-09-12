@@ -206,6 +206,49 @@ def home(request):
     })
 
 
+ARTICLES = [
+    {
+        "title": "Why audience fit beats follower count in B2B",
+        "kicker": "PLAYBOOK",
+        "body": "A 2,000-follower voice read by forty buyers in your category is worth more "
+                "than a 200,000-follower generalist read by nobody who can sign a contract. "
+                "Fit is a function of topic overlap, geography and buying role, which is "
+                "exactly what the marketplace scores creators on.",
+        "minutes": 4,
+    },
+    {
+        "title": "What a creator brief should actually contain",
+        "kicker": "GUIDE",
+        "body": "The brief is the contract. Objective, key messages, the things a creator "
+                "must not say, and a tracked link. Everything else is negotiable, and every "
+                "campaign that goes wrong goes wrong because one of those four was vague.",
+        "minutes": 6,
+    },
+    {
+        "title": "LinkedIn ads versus creator-led cost per lead",
+        "kicker": "BENCHMARK",
+        "body": "Paid social buys impressions from an audience that did not ask for you. "
+                "Creator posts borrow trust from someone that audience already follows. The "
+                "cost per lead usually favours creators; the cost per impression usually "
+                "does not. Both numbers matter.",
+        "minutes": 5,
+    },
+]
+
+
+def blog(request):
+    return render(request, "public/blog.html", {"articles": ARTICLES})
+
+
+def tools(request):
+    """Free calculator. The maths runs in the browser, so there is nothing to post."""
+    return render(request, "public/tools.html")
+
+
+def case_study(request):
+    return render(request, "public/case_study.html", {"case_study": CASE_STUDY, "posts": EXAMPLE_POSTS})
+
+
 def signup(request):
     if request.user.is_authenticated:
         return redirect("dashboard")

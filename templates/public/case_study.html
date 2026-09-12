@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ case_study.title }} | Naano{% endblock %}
+
+{% block content %}
+<section class="cloudscape">
+  <div class="mx-auto max-w-4xl px-5 pt-16 pb-20 md:pt-24">
+    <p class="text-[11px] font-bold tracking-widest text-ink/40">CASE STUDY &middot; {{ case_study.brand }}</p>
+    <h1 class="mt-4 text-[clamp(2rem,5vw,3.5rem)] font-extrabold tracking-[-0.035em] leading-[1.05]">
+      {{ case_study.title }}
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg text-ink/60 leading-relaxed">{{ case_study.body }}</p>
+
+    <dl class="mt-12 grid grid-cols-3 gap-6 max-w-2xl">
+      {% for value, label in case_study.metrics %}
+        <div class="bg-white rounded-2xl card-shadow px-5 py-6">
+          <dd class="text-3xl font-extrabold tracking-tight tabular-nums">{{ value }}</dd>
+          <dt class="mt-1 text-xs text-ink/55 leading-snug">{{ label }}</dt>
+        </div>
+      {% endfor %}
+    </dl>
+  </div>
+</section>
+
+<section class="bg-white py-16 md:py-24">
+  <div class="mx-auto max-w-3xl px-5">
+    <h2 class="text-2xl font-extrabold tracking-tight">The problem</h2>
+    <p class="mt-4 text-ink/65 leading-relaxed">
+      BlogSEO was buying paid social and could see spend go out, but could not say which
+      of it produced a trial. Attribution stopped at the channel, so every decision about
+      where to spend more was a guess dressed up as a report.
+    </p>
+
+    <h2 class="mt-12 text-2xl font-extrabold tracking-tight">What they did</h2>
+    <p class="mt-4 text-ink/65 leading-relaxed">
+      They shortlisted creators by audience fit rather than reach, briefed all nine from
+      the same campaign brief so the messaging stayed consistent, and gave every creator a
+      tracked link tied to their booking.
+    </p>
+
+    <h2 class="mt-12 text-2xl font-extrabold tracking-tight">The result</h2>
+    <p class="mt-4 text-ink/65 leading-relaxed">
+      2,940 qualified clicks and 512 trials, each attributable to the specific post that
+      produced it. The two best creators were not the two largest, which is the finding
+      that changed how they spend.
+    </p>
+
+    <figure class="mt-14 bg-ink text-white rounded-3xl p-9">
+      <blockquote class="text-2xl font-extrabold tracking-[-0.02em] leading-snug">
+        &ldquo;{{ case_study.quote }}&rdquo;
+      </blockquote>
+      <figcaption class="mt-7 flex items-center gap-4">
+        <span class="w-12 h-12 rounded-full bg-white text-ink grid place-items-center font-extrabold">
+          {{ case_study.name|slice:":1" }}
+        </span>
+        <span>
+          <span class="block font-bold">{{ case_study.name }}</span>
+          <span class="block text-sm text-white/60">{{ case_study.role }}</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <div class="mt-14 text-center">
+      <a href="{% url 'signup' %}"
+         class="inline-flex items-center gap-3 bg-ink text-white rounded-full px-8 h-14 font-bold text-lg hover:bg-ink/90 transition">
+        Run a campaign like this <span>&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

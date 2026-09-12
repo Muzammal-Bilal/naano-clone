@@ -6,6 +6,9 @@ from .views import brand, creator, public
 
 urlpatterns = [
     path("", public.home, name="home"),
+    path("blog/", public.blog, name="blog"),
+    path("tools/", public.tools, name="tools"),
+    path("case-study/", public.case_study, name="case_study"),
 
     path("signup/", public.signup, name="signup"),
     path("login/", auth_views.LoginView.as_view(
