@@ -206,6 +206,87 @@ def home(request):
     })
 
 
+CREATOR_FEATURES = [
+    ("Discover brand deals that match your audience.",
+     "Brands find you by audience fit, so the offers that land are ones your followers care about."),
+    ("Get paid on time with secure, transparent payouts.",
+     "The campaign wallet is funded before you post. No invoice, no chasing."),
+    ("See views, clicks and engagement in real time.",
+     "Every post carries a tracked link, so you can prove what your audience is worth."),
+    ("Manage deals and deliver content with ease.",
+     "Accept, decline and submit drafts from one inbox instead of a buried email thread."),
+]
+
+CREATOR_TESTIMONIALS = [
+    ("Naano is the marketplace LinkedIn was missing. The founders truly listen and do "
+     "everything they can to build something that brings real value to its users.", "Yasmin Mwangi"),
+    ("At first I wasn't sure what to expect. But the whole experience was simple and smooth: "
+     "clear opportunities, an easy platform, everything well guided.", "Daniel Fischer"),
+    ("Excellent experience. The platform is simple and efficient, the team ultra-responsive, "
+     "and results come fast.", "Camille Rossi"),
+    ("Great experience, I love the platform, it helps me every day. I already made money with "
+     "it from day one.", "Raghav Vasquez"),
+    ("Naano lets me keep making useful content while monetizing my LinkedIn community.", "Nada Rossi"),
+    ("A young team that's ambitious, efficient and driven. I'd tell every creator to join.", "Felix Djavid"),
+]
+
+CREATOR_FAQS = [
+    ("What is Naano?",
+     "A B2B LinkedIn creator marketplace. Brands book creators for sponsored posts at a fixed "
+     "price per post that you set yourself."),
+    ("Is Naano free for creators?",
+     "Yes. Joining costs nothing and you keep what you charge. Brands pay for the campaign."),
+    ("How much can I earn?",
+     "You set your own price per post. What a brand will pay tracks how well your audience "
+     "matches their buyers, not just how large it is."),
+    ("How and when do I get paid?",
+     "The brand funds the campaign wallet up front, and the payout is released once the post "
+     "goes live. You never raise an invoice."),
+    ("Do I have to sign an exclusivity contract?",
+     "No. You can take deals from anyone, and you can decline any deal without explanation."),
+    ("What kind of brands are on Naano?",
+     "B2B software, agencies and services selling to founders, GTM teams and technical buyers."),
+    ("Do I keep control of my content?",
+     "Always. The brief sets the objective and the things not to say; the words stay yours, "
+     "and you can decline a brief that does not fit."),
+    ("How do I join?",
+     "Sign up as a creator, set your topics, countries and price per post, and you will appear "
+     "in brand searches straight away."),
+]
+
+AGENCY_TRACKS = [
+    {
+        "title": "I manage campaigns for companies",
+        "body": "Operate separate client workspaces, budgets, campaigns and reporting from one portfolio.",
+        "points": ["Create one workspace per client", "Add and allocate client budgets",
+                   "Track campaigns and next actions"],
+        "cta": "Create a brand agency workspace",
+        "featured": True,
+    },
+    {
+        "title": "I represent and manage creators",
+        "body": "Import your roster, manage every profile and run collaborations without creator logins.",
+        "points": ["Import any creator roster", "Manage rates and creator profiles",
+                   "Track collaborations and earnings"],
+        "cta": "Create a creator agency workspace",
+        "featured": False,
+    },
+]
+
+
+def creators_page(request):
+    return render(request, "public/creators.html", {
+        "features": CREATOR_FEATURES,
+        "testimonials": CREATOR_TESTIMONIALS,
+        "faqs": CREATOR_FAQS,
+        "posts": EXAMPLE_POSTS,
+    })
+
+
+def agencies_page(request):
+    return render(request, "public/agencies.html", {"tracks": AGENCY_TRACKS})
+
+
 ARTICLES = [
     {
         "title": "Why audience fit beats follower count in B2B",

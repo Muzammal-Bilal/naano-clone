@@ -120,9 +120,9 @@
       <div class="flex items-center gap-2.5">
         {# Anchors are absolute so the nav still works from /login/ and /signup/. #}
         <div class="hidden lg:flex items-center gap-0.5 mr-3">
-          <a href="{% url 'home' %}#how" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For companies</a>
-          <a href="{% url 'home' %}#creators" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For creators</a>
-          <a href="{% url 'home' %}#agencies" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For agencies</a>
+          <a href="{% url 'home' %}" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For companies</a>
+          <a href="{% url 'creators_page' %}" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For creators</a>
+          <a href="{% url 'agencies_page' %}" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For agencies</a>
           <a href="{% url 'home' %}#how" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">How it works</a>
 
           {% comment %}
@@ -211,6 +211,8 @@
             <li><a href="{% url 'home' %}#pricing" class="text-ink/65 hover:text-ink transition">Pricing</a></li>
             <li><a href="{% url 'home' %}#faq" class="text-ink/65 hover:text-ink transition">FAQs</a></li>
             <li><a href="{% url 'home' %}#creators" class="text-ink/65 hover:text-ink transition">Creator marketplace</a></li>
+            <li><a href="{% url 'blog' %}" class="text-ink/65 hover:text-ink transition">Blog</a></li>
+            <li><a href="{% url 'tools' %}" class="text-ink/65 hover:text-ink transition">Free Tools</a></li>
           </ul>
         </div>
 

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Get paid for your LinkedIn content | Naano for creators{% endblock %}
+{% block description %}Choose deals from B2B brands you know, post in your own voice, and get paid without the admin.{% endblock %}
+
+{% block content %}
+<section class="cloudscape">
+  <div class="mx-auto max-w-7xl px-5 pt-16 pb-24 md:pt-24 md:pb-28 text-center">
+    <h1 class="text-[clamp(2.5rem,6.5vw,4.75rem)] font-extrabold leading-[1.03] tracking-[-0.035em]">
+      Get paid to post on LinkedIn.
+    </h1>
+    <p class="mt-7 mx-auto max-w-2xl text-lg md:text-xl text-ink/60 leading-relaxed">
+      Choose deals from B2B brands you know, post in your own voice, and get paid
+      without negotiating or chasing invoices.
+    </p>
+
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
+      <a href="{% url 'signup' %}"
+         class="group inline-flex items-center gap-3 bg-ink text-white rounded-full px-8 h-14 font-bold text-lg hover:bg-ink/90 transition">
+        Start earning <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
+      </a>
+      <a href="#creator-how" class="group inline-flex items-center gap-3 font-bold text-lg">
+        See how it works <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
+      </a>
+    </div>
+
+    <p class="mt-14 text-sm font-semibold text-ink/55">
+      Creators keep 100% of the price they set.
+    </p>
+  </div>
+</section>
+
+<section id="creator-how" class="bg-white py-20 md:py-28 scroll-mt-[72px]">
+  <div class="mx-auto max-w-7xl px-5">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+      For creators who don't want the admin.
+    </h2>
+    <p class="mt-5 mx-auto max-w-2xl text-center text-lg text-ink/60">
+      Find deals, get paid, and track your performance from one dashboard. No
+      invoicing, no chasing, no spreadsheets.
+    </p>
+
+    <div class="mt-14 grid gap-5 md:grid-cols-2">
+      {% for title, body in features %}
+        <div class="bg-white rounded-3xl border border-black/[.07] p-8">
+          <span class="text-sm font-mono text-ink/35">{{ forloop.counter|stringformat:"02d" }}</span>
+          <h3 class="mt-4 text-xl font-extrabold tracking-tight">{{ title }}</h3>
+          <p class="mt-3 text-ink/60 leading-relaxed">{{ body }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="bg-sky-100 py-20 md:py-28">
+  <div class="mx-auto max-w-7xl px-5">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+      Real posts from real creators.
+    </h2>
+
+    <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {% for post in posts %}
+        <article class="bg-white rounded-3xl p-6 card-shadow flex flex-col">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-full bg-ink text-white grid place-items-center font-bold text-sm shrink-0">
+              {{ post.name|slice:":1" }}
+            </span>
+            <div class="min-w-0">
+              <p class="font-bold text-sm truncate">{{ post.name }}</p>
+              <p class="text-[11px] text-ink/50 truncate">{{ post.meta }}</p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm leading-relaxed text-ink/80 flex-1">{{ post.text }}</p>
+          <dl class="mt-5 grid grid-cols-3 gap-2 pt-4 border-t border-black/[.07] text-center">
+            <div>
+              <dd class="font-extrabold tabular-nums">{{ post.impressions }}</dd>
+              <dt class="text-[10px] text-ink/45">VIEWS</dt>
+            </div>
+            <div>
+              <dd class="font-extrabold tabular-nums">{{ post.clicks }}</dd>
+              <dt class="text-[10px] text-ink/45">CLICKS</dt>
+            </div>
+            <div>
+              <dd class="font-extrabold tabular-nums">{{ post.leads }}</dd>
+              <dt class="text-[10px] text-ink/45">LEADS</dt>
+            </div>
+          </dl>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="bg-white py-20 md:py-28">
+  <div class="mx-auto max-w-7xl px-5">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+      What creators say.
+    </h2>
+    <p class="mt-5 text-center text-lg text-ink/60">
+      <strong class="text-ink tabular-nums"
+              x-data="countUp(2000, 'comma', '+')" x-text="text">2,000+</strong>
+      creators already getting paid on Naano.
+    </p>
+
+    <div class="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {% for quote, name in testimonials %}
+        <figure class="bg-white rounded-3xl border border-black/[.07] p-7 flex flex-col">
+          <blockquote class="text-ink/75 leading-relaxed flex-1">&ldquo;{{ quote }}&rdquo;</blockquote>
+          <figcaption class="mt-6 flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center text-xs font-bold">
+              {{ name|slice:":1" }}
+            </span>
+            <span class="font-bold text-sm">{{ name }}</span>
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="bg-sky-100 py-20 md:py-28">
+  <div class="mx-auto max-w-3xl px-5">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+      Frequently asked questions.
+    </h2>
+    <p class="mt-4 text-lg text-ink/60 text-center">Everything you need to know before you start earning.</p>
+
+    <div class="mt-12 divide-y divide-ink/10 border-y border-ink/10" x-data="{ open: 0 }">
+      {% for question, answer in faqs %}
+        <div>
+          <button type="button" @click="open = open === {{ forloop.counter0 }} ? null : {{ forloop.counter0 }}"
+                  :aria-expanded="open === {{ forloop.counter0 }}" aria-controls="cfaq-{{ forloop.counter0 }}"
+                  class="w-full flex items-center justify-between gap-6 py-5 text-left font-bold hover:text-ink/70 transition">
+            <span>{{ question }}</span>
+            <span class="shrink-0 text-xl text-ink/40 transition-transform duration-200"
+                  :class="open === {{ forloop.counter0 }} && 'rotate-45'">+</span>
+          </button>
+          <div id="cfaq-{{ forloop.counter0 }}" x-show="open === {{ forloop.counter0 }}" x-collapse>
+            <p class="pb-6 -mt-1 text-ink/60 leading-relaxed">{{ answer }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="cloudscape py-20 md:py-28">
+  <div class="mx-auto max-w-3xl px-5 text-center">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em]">
+      You've seen how it works. Now get paid for it.
+    </h2>
+    <p class="mt-5 text-lg text-ink/60">
+      It's free to join, and you keep 100% of what you charge.
+    </p>
+    <a href="{% url 'signup' %}"
+       class="mt-10 inline-flex items-center gap-3 bg-ink text-white rounded-full px-8 h-14 font-bold text-lg hover:bg-ink/90 transition">
+      Apply now <span>&rarr;</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

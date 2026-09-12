@@ -6,9 +6,12 @@ from .views import brand, creator, public
 
 urlpatterns = [
     path("", public.home, name="home"),
+    # Paths mirror the live site so the rebuild is navigable the same way.
+    path("creators/", public.creators_page, name="creators_page"),
+    path("agencies/", public.agencies_page, name="agencies_page"),
     path("blog/", public.blog, name="blog"),
-    path("tools/", public.tools, name="tools"),
-    path("case-study/", public.case_study, name="case_study"),
+    path("free-tools/", public.tools, name="tools"),
+    path("case-studies/blogseo/", public.case_study, name="case_study"),
 
     path("signup/", public.signup, name="signup"),
     path("login/", auth_views.LoginView.as_view(
