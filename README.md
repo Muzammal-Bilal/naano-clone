@@ -38,7 +38,7 @@ Each of these is a decision, not an oversight.
 | LinkedIn OAuth and real publishing | Needs a LinkedIn partner app and review. Days of waiting, zero visible product. |
 | Stripe payments and real payouts | The wallet is a ledger that records movement without moving money. Real payments would consume the whole budget for one screen. |
 | Real UTM click tracking | Attribution infrastructure is a product in itself. Metrics are seeded from a decay curve that matches how a post actually behaves. |
-| The Managed (€700/mo) tier | It is a services offering, not software. Nothing to build. |
+| Checkout and plan upgrades | Both pricing tiers are presented; neither takes payment. Billing is the same Stripe integration cut above. |
 | Blog, SEO pages, help centre | Content surface. No engineering signal. |
 | Email and notifications | Needs a provider and deliverability setup to demo honestly. |
 | Drag-and-drop pipeline | A dropdown drives the same state machine with far less code, and works on a phone. |

@@ -113,6 +113,24 @@
 </section>
 
 <section class="bg-white py-20 md:py-28">
+  <div class="mx-auto max-w-4xl px-5 text-center">
+    <p class="text-sm font-bold tracking-widest text-ink/40">REAL TEAMS. MEASURABLE PIPELINE.</p>
+    <blockquote class="mt-8 text-[clamp(1.5rem,3.2vw,2.25rem)] font-extrabold tracking-[-0.03em] leading-snug">
+      &ldquo;{{ testimonial.quote }}&rdquo;
+    </blockquote>
+    <div class="mt-8 flex items-center justify-center gap-4">
+      <div class="w-12 h-12 rounded-full bg-ink text-white grid place-items-center font-extrabold">
+        {{ testimonial.name|slice:":1" }}
+      </div>
+      <div class="text-left">
+        <p class="font-bold">{{ testimonial.name }}</p>
+        <p class="text-sm text-ink/55">{{ testimonial.role }} &middot; {{ testimonial.company }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white pb-20 md:pb-28">
   <div class="mx-auto max-w-7xl px-5">
     <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
       Proven across thousands of campaigns.
@@ -123,6 +141,86 @@
           <p class="text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold tracking-tight tabular-nums"
              x-data="countUp({{ stat.value }}, '{{ stat.style }}', '+')" x-text="text">{{ stat.display }}</p>
           <p class="mt-2 text-ink/60">{{ stat.label }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="bg-sky-100 py-20 md:py-28 scroll-mt-[72px]">
+  <div class="mx-auto max-w-5xl px-5">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+      Pricing.
+    </h2>
+    <p class="mt-4 text-lg text-ink/60 text-center max-w-2xl mx-auto">
+      Start free. Upgrade when you want your time back.
+    </p>
+
+    <div class="mt-14 grid gap-6 md:grid-cols-2">
+      {% for plan in plans %}
+        <div class="rounded-3xl p-8 card-shadow flex flex-col
+                    {% if plan.featured %}bg-ink text-white{% else %}bg-white{% endif %}">
+          <p class="text-[10px] font-bold tracking-widest {% if plan.featured %}text-white/50{% else %}text-ink/40{% endif %}">
+            {{ plan.badge }}
+          </p>
+          <h3 class="mt-4 text-2xl font-extrabold tracking-tight">{{ plan.name }}</h3>
+          <p class="mt-3 text-sm leading-relaxed {% if plan.featured %}text-white/70{% else %}text-ink/60{% endif %}">
+            {{ plan.blurb }}
+          </p>
+
+          <p class="mt-7 text-4xl font-extrabold tracking-tight">
+            {{ plan.price }}<span class="text-base font-semibold {% if plan.featured %}text-white/50{% else %}text-ink/45{% endif %}">{{ plan.period }}</span>
+          </p>
+
+          <ul class="mt-7 space-y-3 text-sm flex-1">
+            {% for feature in plan.features %}
+              <li class="flex gap-3">
+                <span class="{% if plan.featured %}text-sky-300{% else %}text-ink/35{% endif %}">&check;</span>
+                <span class="{% if plan.featured %}text-white/85{% else %}text-ink/70{% endif %}">{{ feature }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <a href="{% url 'signup' %}"
+             class="mt-8 h-12 grid place-items-center rounded-full font-bold transition
+                    {% if plan.featured %}bg-white text-ink hover:bg-white/90{% else %}bg-ink text-white hover:bg-ink/90{% endif %}">
+            {{ plan.cta }}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <p class="mt-8 text-center text-sm text-ink/50">
+      Campaign spend is separate. No lock-in. Cancel anytime.
+    </p>
+  </div>
+</section>
+
+<section id="faq" class="bg-white py-20 md:py-28 scroll-mt-[72px]">
+  <div class="mx-auto max-w-3xl px-5">
+    <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] font-extrabold tracking-[-0.03em] text-center">
+      Frequently asked questions.
+    </h2>
+    <p class="mt-4 text-lg text-ink/60 text-center">Everything you need to know before getting started.</p>
+
+    {% comment %}
+    One open panel at a time, tracked by index. aria-expanded and aria-controls
+    are what make this usable with a keyboard and a screen reader rather than
+    just clickable.
+    {% endcomment %}
+    <div class="mt-12 divide-y divide-black/[.07] border-y border-black/[.07]" x-data="{ open: 0 }">
+      {% for question, answer in faqs %}
+        <div>
+          <button type="button" @click="open = open === {{ forloop.counter0 }} ? null : {{ forloop.counter0 }}"
+                  :aria-expanded="open === {{ forloop.counter0 }}" aria-controls="faq-{{ forloop.counter0 }}"
+                  class="w-full flex items-center justify-between gap-6 py-5 text-left font-bold hover:text-ink/70 transition">
+            <span>{{ question }}</span>
+            <span class="shrink-0 text-xl text-ink/40 transition-transform duration-200"
+                  :class="open === {{ forloop.counter0 }} && 'rotate-45'">+</span>
+          </button>
+          <div id="faq-{{ forloop.counter0 }}" x-show="open === {{ forloop.counter0 }}" x-collapse>
+            <p class="pb-6 -mt-1 text-ink/60 leading-relaxed">{{ answer }}</p>
+          </div>
         </div>
       {% endfor %}
     </div>

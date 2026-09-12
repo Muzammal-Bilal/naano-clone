@@ -35,6 +35,81 @@ HOW_IT_WORKS = [
     },
 ]
 
+TESTIMONIAL = {
+    "quote": "We manage \u20ac10M+ of influence budget every year. For B2B, Naano simply "
+             "makes our life easier.",
+    "name": "David Zmirov",
+    "role": "CEO, Zmirov Communication",
+    "company": "Influence agency",
+}
+
+# Pricing is presented, not transacted. The plans are real and the copy is
+# honest about what each includes; what is missing is a checkout, which is a
+# payments integration rather than a product decision.
+PLANS = [
+    {
+        "badge": "SELF-SERVE",
+        "name": "Run it yourself.",
+        "blurb": "For teams that want the infrastructure to run creator campaigns in-house.",
+        "price": "\u20ac0",
+        "period": "/ month",
+        "cta": "Start for free",
+        "featured": False,
+        "features": [
+            "Creator marketplace access",
+            "Brief creation from your objective",
+            "Track clicks, companies and pipeline",
+            "Automatic creator payouts",
+        ],
+    },
+    {
+        "badge": "MANAGED CAMPAIGNS",
+        "name": "Get your time back.",
+        "blurb": "For teams that want Naano to operate their creator channel end to end.",
+        "price": "Custom quote",
+        "period": "",
+        "cta": "Book a campaign call",
+        "featured": True,
+        "features": [
+            "Campaign strategy and positioning",
+            "Creator sourcing and coordination",
+            "Brief creation and campaign launch",
+            "Reporting and optimisation",
+        ],
+    },
+]
+
+FAQS = [
+    ("What is Naano?",
+     "A B2B LinkedIn creator marketplace. Companies discover and book vetted creators "
+     "for sponsored posts, each at a fixed price per post set by the creator. Audiences "
+     "run from niche voices around 1,000 followers to established creators with several "
+     "hundred thousand."),
+    ("How does Naano find the right creators?",
+     "Every creator is scored against your ICP: the topics you sell into, the countries "
+     "your buyers are in, and your budget. Results are ranked by that fit rather than by "
+     "follower count, because a 2,000-follower voice speaking to your exact buyer beats a "
+     "200,000-follower generalist."),
+    ("Which networks do you support?",
+     "LinkedIn, which is where B2B buying conversations actually happen. X is the obvious "
+     "next one and the data model already allows for it."),
+    ("How does per-post pricing work?",
+     "Creators set their own price per post. You see it before you book, next to the cost "
+     "per view it implies, so two creators can be compared on the same terms."),
+    ("How does attribution work?",
+     "Every post carries a tracked link, so clicks, leads and pipeline map back to the "
+     "creator and campaign that produced them instead of to an anonymous impression pool."),
+    ("Do you handle creator payouts?",
+     "Yes. One wallet funds the campaign, creators are paid on schedule, and nobody has to "
+     "raise an invoice."),
+    ("What's the difference between Free and Done for you?",
+     "Free gives you the platform and you run campaigns yourself. Done for you means the "
+     "strategy, sourcing, briefing and reporting are handled for you."),
+    ("Can I upgrade or cancel anytime?",
+     "Yes. Campaign spend is separate, there is no lock-in, and you can cancel at any time."),
+]
+
+
 def _stat(value, label, style="compact"):
     """A headline number the page counts up to.
 
@@ -72,6 +147,9 @@ def home(request):
         "steps": HOW_IT_WORKS,
         "stats": STATS,
         "logos": LOGOS,
+        "testimonial": TESTIMONIAL,
+        "plans": PLANS,
+        "faqs": FAQS,
     })
 
 

@@ -25,6 +25,8 @@
     }
   </script>
   <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+  {# Collapse plugin must load before the core bundle, or x-collapse is unknown. #}
+  <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script>
     // Headline figures count up from zero when they scroll into view.
@@ -138,18 +140,43 @@
 
   <footer class="border-t border-black/5 bg-white">
     <div class="mx-auto max-w-7xl px-5 py-14">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
-        <div class="flex items-center gap-2.5">
-          <svg width="28" height="23" viewBox="0 0 32 26" fill="none" aria-hidden="true">
-            <path d="M2 7.5C2 4 4.8 1.6 8.2 2.1l19 2.8c3.4.5 4.6 4.8 1.9 6.9L12.6 24.3C9.9 26.4 6 24.6 6 21.2V7.5Z" fill="#0A0D14"/>
-            <circle cx="9" cy="21" r="2.6" fill="#2E90FA"/>
-          </svg>
-          <span class="text-[22px] font-extrabold tracking-tight">naano</span>
+      <div class="grid gap-10 md:grid-cols-4">
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2.5">
+            <svg width="28" height="23" viewBox="0 0 32 26" fill="none" aria-hidden="true">
+              <path d="M2 7.5C2 4 4.8 1.6 8.2 2.1l19 2.8c3.4.5 4.6 4.8 1.9 6.9L12.6 24.3C9.9 26.4 6 24.6 6 21.2V7.5Z" fill="#0A0D14"/>
+              <circle cx="9" cy="21" r="2.6" fill="#2E90FA"/>
+            </svg>
+            <span class="text-[22px] font-extrabold tracking-tight">naano</span>
+          </div>
+          <p class="mt-4 text-sm text-ink/55 max-w-sm leading-relaxed">
+            Turn LinkedIn creators into your best acquisition channel.
+          </p>
         </div>
-        <p class="text-sm text-ink/50 max-w-md">
-          A rebuild of naano.com for the 8x assignment. Not affiliated with Naano.
-        </p>
+
+        <div>
+          <p class="text-[10px] font-bold tracking-widest text-ink/40">PRODUCT</p>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a href="{% url 'home' %}#how" class="text-ink/65 hover:text-ink transition">Features</a></li>
+            <li><a href="{% url 'home' %}#pricing" class="text-ink/65 hover:text-ink transition">Pricing</a></li>
+            <li><a href="{% url 'home' %}#faq" class="text-ink/65 hover:text-ink transition">FAQs</a></li>
+            <li><a href="{% url 'home' %}#creators" class="text-ink/65 hover:text-ink transition">Creator marketplace</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-bold tracking-widest text-ink/40">GET STARTED</p>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a href="{% url 'signup' %}" class="text-ink/65 hover:text-ink transition">Sign up as a brand</a></li>
+            <li><a href="{% url 'signup' %}" class="text-ink/65 hover:text-ink transition">Sign up as a creator</a></li>
+            <li><a href="{% url 'login' %}" class="text-ink/65 hover:text-ink transition">Sign in</a></li>
+          </ul>
+        </div>
       </div>
+
+      <p class="mt-12 pt-8 border-t border-black/5 text-sm text-ink/45">
+        A rebuild of naano.com for the 8x assignment. Not affiliated with Naano.
+      </p>
     </div>
   </footer>
 
