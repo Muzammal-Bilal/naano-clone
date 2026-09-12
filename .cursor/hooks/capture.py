@@ -2,15 +2,16 @@
 """Agent capture hook for the 8x assignment.
 
 Writes one markdown log per Cursor session into .agent-logs/, containing only
-the verbatim prompt and the FINAL response for each turn.
+the verbatim prompt and the final response of each turn.
 
-Wired to three Cursor lifecycle events in .cursor/hooks.json:
-  beforeSubmitPrompt -> "prompt"    append a PROMPT entry
-  afterAgentResponse -> "response"  overwrite the pending-response buffer
-  stop               -> "flush"     append the surviving buffer as a RESPONSE entry
+Wired to two Cursor lifecycle events in .cursor/hooks.json:
+  beforeSubmitPrompt -> "prompt"  append the prompt verbatim
+  stop               -> "flush"   append that turn's final response
 
-The overwrite-then-flush split is what keeps intermediate responses out of the
-log: only the buffer still standing at end-of-turn is ever written.
+Cursor's stop payload carries no response text, only a transcript path, so the
+response is recovered from the session transcript. Within a turn the assistant
+emits many entries; the last one holding text is the closing message, which is
+text-only. Thinking and tool calls are therefore excluded by construction.
 
 Every path fails open. A logging bug must never block the build.
 """
@@ -27,114 +28,52 @@ STATE = ROOT / ".cursor" / "hooks" / ".state"
 AUTHOR = "Muzammal-Bilal"
 PROJECT = "naano-rebuild"
 TOOL = "cursor"
-FALLBACK_MODEL = "claude-opus-5"
-
-SESSION_KEYS = (
-    "conversation_id", "conversationId", "session_id", "sessionId",
-    "chat_id", "chatId", "thread_id", "threadId", "id",
-)
-PROMPT_KEYS = (
-    "prompt", "user_prompt", "userPrompt", "prompt_text", "promptText",
-    "text", "message", "content", "input",
-)
-RESPONSE_KEYS = (
-    "response", "assistant_response", "assistantResponse", "agent_response",
-    "agentResponse", "response_text", "responseText", "text", "message",
-    "content", "output",
-)
-MODEL_KEYS = ("model", "model_name", "modelName", "model_id", "modelId")
-TRANSCRIPT_KEYS = (
-    "transcript_path", "transcriptPath", "transcript", "conversation_path",
-    "conversationPath", "session_file", "sessionFile",
-)
 
 
-def utc_now():
-    return datetime.datetime.now(datetime.timezone.utc)
+def stamp(moment=None):
+    moment = moment or datetime.datetime.now(datetime.timezone.utc)
+    return moment.strftime("%Y-%m-%dT%H:%M:%S.") + f"{moment.microsecond // 1000:03d}Z"
 
 
-def stamp(dt):
-    return dt.strftime("%Y-%m-%dT%H:%M:%S.") + f"{dt.microsecond // 1000:03d}Z"
-
-
-def dig(payload, keys):
-    """Breadth-first search for the first non-empty string under any of `keys`."""
-    queue = [payload]
-    while queue:
-        node = queue.pop(0)
-        if isinstance(node, dict):
-            for key in keys:
-                value = node.get(key)
-                if isinstance(value, str) and value.strip():
-                    return value
-                if isinstance(value, (int, float)):
-                    return str(value)
-            queue.extend(node.values())
-        elif isinstance(node, list):
-            queue.extend(node)
-    return None
-
-
-def read_payload():
-    raw = sys.stdin.read()
+def read_event():
+    """Cursor writes JSON with a UTF-8 BOM, so decode with utf-8-sig."""
     try:
+        raw = sys.stdin.buffer.read().decode("utf-8-sig", errors="replace")
         return json.loads(raw) if raw.strip() else {}
-    except (ValueError, TypeError):
-        return {"_unparsed_stdin": raw}
+    except (ValueError, OSError):
+        return {}
 
 
-def probe(event, payload):
-    """Record raw payloads so the real field names can be pinned. Gitignored."""
+def note(label, detail):
+    """Scratch diagnostics. Gitignored, never part of the submission."""
     try:
         STATE.mkdir(parents=True, exist_ok=True)
-        line = json.dumps(
-            {"event": event, "at": stamp(utc_now()), "payload": payload},
-            ensure_ascii=False, default=str,
-        )
-        with (STATE / "raw-events.jsonl").open("a", encoding="utf-8") as handle:
-            handle.write(line + "\n")
+        with (STATE / "hook-debug.log").open("a", encoding="utf-8") as handle:
+            handle.write(f"{stamp()} {label} {detail}\n")
     except OSError:
         pass
 
 
-def session_id(payload):
-    return dig(payload, SESSION_KEYS) or "unknown-session"
-
-
-def state_path(sid):
-    return STATE / f"{sid}.json"
-
-
-def load_state(sid):
+def load_state(session):
     try:
-        return json.loads(state_path(sid).read_text(encoding="utf-8"))
+        return json.loads((STATE / f"{session}.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
 
 
-def save_state(sid, state):
+def save_state(session, state):
     STATE.mkdir(parents=True, exist_ok=True)
-    state_path(sid).write_text(json.dumps(state, indent=2), encoding="utf-8")
+    (STATE / f"{session}.json").write_text(json.dumps(state, indent=2), encoding="utf-8")
 
 
-def log_path(sid, state):
-    """One file per session, created on that session's first prompt."""
-    if state.get("file"):
-        return LOGS / state["file"]
-    started = utc_now()
-    name = f"{started.strftime('%Y-%m-%d_%H-%M-%S')}_{sid}.md"
-    state["file"] = name
-    state["first_prompt_time"] = stamp(started)
-    return LOGS / name
-
-
-def render_frontmatter(sid, state):
+def header(session, state):
+    date = state.get("first_prompt_time", "")[:10]
     return "\n".join([
         "---",
-        f"session_id: {sid}",
-        f"date: {state.get('first_prompt_time', '')[:10]}",
+        f"session_id: {session}",
+        f"date: {date}",
         f"author: {AUTHOR}",
-        f"model: {state.get('model', FALLBACK_MODEL)}",
+        f"model: {state.get('model', '')}",
         f"tool: {TOOL}",
         f"project: {PROJECT}",
         f"total_exchanges: {state.get('exchanges', 0)}",
@@ -142,155 +81,116 @@ def render_frontmatter(sid, state):
         f"last_prompt_time: {state.get('last_prompt_time', '')}",
         "---",
         "",
-        f"# Session Log - {state.get('first_prompt_time', '')[:10]}",
+        f"# Session Log - {date}",
         "",
-        f"Session: `{sid[:8]}` | Project: `{PROJECT}` | Author: `{AUTHOR}`",
+        f"Session: `{session[:8]}` | Project: `{PROJECT}` | Author: `{AUTHOR}`",
         "",
         "---",
         "",
     ])
 
 
-def rewrite_frontmatter(path, sid, state):
-    """Refresh the header counters. Entry bodies are never touched."""
-    try:
-        text = path.read_text(encoding="utf-8")
-    except OSError:
-        return
-    marker = "\n[LOG_ENTRY"
-    index = text.find(marker)
-    body = "\n" + text[index + 1:] if index != -1 else ""
-    path.write_text(render_frontmatter(sid, state) + body, encoding="utf-8")
-
-
-def append_entry(path, kind, num, sid, model, text):
+def write_entry(path, session, state, kind, text):
+    """Append an entry, then refresh the header counters. Bodies are never touched."""
     LOGS.mkdir(parents=True, exist_ok=True)
-    block = (
-        f"[LOG_ENTRY type={kind} num={num} session={sid[:8]}]\n"
-        f"timestamp: {stamp(utc_now())}\n"
-        f"model: {model}\n\n"
+    body = ""
+    if path.exists():
+        existing = path.read_text(encoding="utf-8")
+        cut = existing.find("\n[LOG_ENTRY")
+        body = existing[cut + 1:] if cut != -1 else ""
+
+    body += (
+        f"[LOG_ENTRY type={kind} num={state.get('exchanges', 0)} session={session[:8]}]\n"
+        f"timestamp: {stamp()}\n"
+        f"model: {state.get('model', '')}\n\n"
         f"{text.rstrip()}\n\n\n"
     )
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(block)
+    path.write_text(header(session, state) + "\n" + body, encoding="utf-8")
 
 
-def last_assistant_from_transcript(payload):
-    """Fallback if afterAgentResponse never carried the response text."""
-    location = dig(payload, TRANSCRIPT_KEYS)
+def final_response(location):
+    """Last assistant entry carrying text is that turn's closing message."""
     if not location:
         return None
     path = Path(location)
     if not path.is_file():
         return None
     try:
-        raw = path.read_text(encoding="utf-8", errors="replace")
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     except OSError:
         return None
 
-    found = None
-    for line in raw.splitlines():
-        line = line.strip()
-        if not line:
+    latest = None
+    for line in lines:
+        if not line.strip():
             continue
         try:
             record = json.loads(line)
         except ValueError:
             continue
-        role = dig(record, ("role", "type", "sender"))
-        if role and str(role).lower() in ("assistant", "agent", "ai"):
-            text = dig(record, RESPONSE_KEYS)
-            if text:
-                found = text
-    return found
+        if record.get("role") != "assistant":
+            continue
+        blocks = record.get("message", {}).get("content", [])
+        texts = [
+            block.get("text", "") for block in blocks
+            if isinstance(block, dict) and block.get("type") == "text"
+            and block.get("text", "").strip()
+        ]
+        if texts:
+            latest = "\n\n".join(texts)
+    return latest
 
 
-def handle_prompt(payload):
-    sid = session_id(payload)
-    state = load_state(sid)
-    path = log_path(sid, state)
+def on_prompt(event):
+    session = event.get("conversation_id") or event.get("session_id") or "unknown-session"
+    state = load_state(session)
 
-    model = dig(payload, MODEL_KEYS) or state.get("model") or FALLBACK_MODEL
-    text = dig(payload, PROMPT_KEYS) or "[hook could not read prompt text from payload]"
+    now = stamp()
+    state["model"] = event.get("model") or state.get("model", "")
+    state["exchanges"] = state.get("exchanges", 0) + 1
+    state["last_prompt_time"] = now
+    state.setdefault("first_prompt_time", now)
+    state.setdefault(
+        "file",
+        f"{now[:10]}_{now[11:19].replace(':', '-')}_{session}.md",
+    )
 
-    num = state.get("exchanges", 0) + 1
-    state["exchanges"] = num
-    state["model"] = model
-    state["last_prompt_time"] = stamp(utc_now())
-    state["pending_num"] = num
-
-    if not path.exists():
-        LOGS.mkdir(parents=True, exist_ok=True)
-        path.write_text(render_frontmatter(sid, state), encoding="utf-8")
-
-    append_entry(path, "PROMPT", num, sid, model, text)
-    save_state(sid, state)
-    rewrite_frontmatter(path, sid, state)
-
-
-def handle_response(payload):
-    """Overwrite, never append. Intermediate responses erase themselves."""
-    sid = session_id(payload)
-    text = dig(payload, RESPONSE_KEYS)
+    text = event.get("prompt")
     if not text:
-        return
-    STATE.mkdir(parents=True, exist_ok=True)
-    (STATE / f"{sid}.pending.txt").write_text(text, encoding="utf-8")
+        note("prompt-missing", list(event.keys()))
+        text = "[hook could not read prompt text]"
 
-    state = load_state(sid)
-    model = dig(payload, MODEL_KEYS)
-    if model:
-        state["model"] = model
-        save_state(sid, state)
+    write_entry(LOGS / state["file"], session, state, "PROMPT", text)
+    save_state(session, state)
 
 
-def handle_flush(payload):
-    sid = session_id(payload)
-    state = load_state(sid)
+def on_flush(event):
+    session = event.get("conversation_id") or event.get("session_id") or "unknown-session"
+    state = load_state(session)
     if not state.get("file"):
+        note("flush-no-session", session)
         return
 
-    buffer = STATE / f"{sid}.pending.txt"
-    text = None
-    if buffer.exists():
-        try:
-            text = buffer.read_text(encoding="utf-8")
-        except OSError:
-            text = None
+    text = final_response(event.get("transcript_path"))
     if not text:
-        text = last_assistant_from_transcript(payload)
-    if not text:
-        text = "[hook could not read response text for this turn]"
+        note("flush-no-response", event.get("transcript_path"))
+        text = "[hook could not recover the response for this turn]"
 
-    num = state.get("pending_num", state.get("exchanges", 0))
-    path = LOGS / state["file"]
-    append_entry(path, "RESPONSE", num, sid, state.get("model", FALLBACK_MODEL), text)
-
-    try:
-        buffer.unlink(missing_ok=True)
-    except OSError:
-        pass
-    state.pop("pending_num", None)
-    save_state(sid, state)
-    rewrite_frontmatter(path, sid, state)
+    write_entry(LOGS / state["file"], session, state, "RESPONSE", text)
 
 
 def main():
-    event = sys.argv[1] if len(sys.argv) > 1 else "unknown"
-    payload = read_payload()
-    probe(event, payload)
+    action = sys.argv[1] if len(sys.argv) > 1 else ""
+    event = read_event()
     try:
-        if event == "prompt":
-            handle_prompt(payload)
-        elif event == "response":
-            handle_response(payload)
-        elif event == "flush":
-            handle_flush(payload)
+        if action == "prompt":
+            on_prompt(event)
+        elif action == "flush":
+            on_flush(event)
     except Exception as error:  # never block the agent on a logging failure
-        probe(f"{event}-error", {"error": repr(error)})
+        note(f"{action}-error", repr(error))
     print("{}")
-    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

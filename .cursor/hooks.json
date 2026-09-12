@@ -4,9 +4,6 @@
     "beforeSubmitPrompt": [
       { "command": "python .cursor/hooks/capture.py prompt", "timeout": 15 }
     ],
-    "afterAgentResponse": [
-      { "command": "python .cursor/hooks/capture.py response", "timeout": 15 }
-    ],
     "stop": [
       { "command": "python .cursor/hooks/capture.py flush", "timeout": 15 }
     ]
