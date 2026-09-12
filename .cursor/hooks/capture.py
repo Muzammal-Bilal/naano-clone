@@ -157,8 +157,14 @@ def on_prompt(event):
 
     text = event.get("prompt")
     if not text:
-        note("prompt-missing", list(event.keys()))
-        text = "[hook could not read prompt text]"
+        # An image-only message really does arrive with an empty prompt, which
+        # is different from the payload being unreadable. Say which it was.
+        note("prompt-empty", list(event.keys()))
+        if "prompt" in event:
+            count = len(event.get("attachments") or [])
+            text = f"[no prompt text; message carried {count} attachment(s)]"
+        else:
+            text = "[hook could not read prompt text]"
 
     write_entry(LOGS / state["file"], session, state, "PROMPT", text)
     save_state(session, state)
