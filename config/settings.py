@@ -20,14 +20,17 @@ def env_flag(name, default="0"):
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-insecure-key-do-not-ship")
 DEBUG = env_flag("DEBUG", "1")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".railway.app"]
-CSRF_TRUSTED_ORIGINS = ["https://*.railway.app"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".railway.app", ".onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://*.railway.app", "https://*.onrender.com"]
 
-# Railway injects the public domain at runtime.
-RAILWAY_DOMAIN = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
-if RAILWAY_DOMAIN:
-    ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
-    CSRF_TRUSTED_ORIGINS.append(f"https://{RAILWAY_DOMAIN}")
+# Hosts publish the live domain under their own variable name. Reading all of
+# them keeps the app portable, which matters because the free tier a platform
+# offers today is not the one it offers next quarter.
+for variable in ("RAILWAY_PUBLIC_DOMAIN", "RENDER_EXTERNAL_HOSTNAME", "SITE_DOMAIN"):
+    domain = os.environ.get(variable)
+    if domain:
+        ALLOWED_HOSTS.append(domain)
+        CSRF_TRUSTED_ORIGINS.append(f"https://{domain}")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
