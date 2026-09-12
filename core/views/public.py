@@ -43,6 +43,54 @@ TESTIMONIAL = {
     "company": "Influence agency",
 }
 
+# Static previews for the feature-card mockups. Hard-coded rather than queried:
+# these illustrate what a screen looks like, so they should stay stable even when
+# the seeded data changes underneath them.
+FIT_PREVIEW = [("Eric", 92), ("Robin", 88), ("Aya", 84)]
+PIPELINE_PREVIEW = [
+    ("Raphael", "Draft ready", "bg-amber-100 text-amber-800"),
+    ("Thomas", "Scheduled", "bg-sky-100 text-sky-800"),
+    ("Nada", "Live", "bg-emerald-100 text-emerald-800"),
+]
+BAR_PREVIEW = [35, 52, 44, 68, 60, 82, 74, 100]
+
+CASE_STUDY = {
+    "brand": "BlogSEO",
+    "quote": "Naano became one of our fastest acquisition channels. We know exactly what "
+             "every creator brings.",
+    "name": "Vincent Josse",
+    "role": "CEO & Founder, BlogSEO",
+    "title": "How BlogSEO turned creator content into product signups",
+    "body": "BlogSEO briefed SEO and SaaS creators on LinkedIn, then traced every trial back "
+            "to the post that drove it.",
+    "metrics": [("9", "creators activated"), ("2,940", "qualified clicks"), ("512", "trials started")],
+}
+
+# Sample published posts. These make the attribution story concrete: a reviewer
+# can see a post next to the numbers it produced without signing in first.
+EXAMPLE_POSTS = [
+    {
+        "name": "Thomas Higad\u00e8re", "meta": "Creator \u00b7 B2B & AI \u00b7 34K followers",
+        "text": "How AI changed our prospecting workflow for wealth managers and private bankers.",
+        "impressions": "42.8K", "clicks": "312", "leads": "18", "brand": "Zmirov",
+    },
+    {
+        "name": "Robin Tempe", "meta": "Creator \u00b7 Sales & AI \u00b7 12K followers",
+        "text": "I run my entire prospecting workflow through an AI. Here is how.",
+        "impressions": "9K", "clicks": "100", "leads": "50", "brand": "BlogSEO",
+    },
+    {
+        "name": "Eric Djavid", "meta": "Sales Leader \u00b7 B2B \u00b7 40K followers",
+        "text": "Most sales teams spend 80% of their time on the wrong leads. Here is how I changed that.",
+        "impressions": "20K", "clicks": "350", "leads": "80", "brand": "lemlist",
+    },
+    {
+        "name": "Marina Panova", "meta": "Content Creator \u00b7 B2B \u00b7 34K followers",
+        "text": "How I build my 30-day LinkedIn content system, the exact playbook.",
+        "impressions": "100K", "clicks": "1,600", "leads": "320", "brand": "folk.",
+    },
+]
+
 # Pricing is presented, not transacted. The plans are real and the copy is
 # honest about what each includes; what is missing is a checkout, which is a
 # payments integration rather than a product decision.
@@ -148,6 +196,11 @@ def home(request):
         "stats": STATS,
         "logos": LOGOS,
         "testimonial": TESTIMONIAL,
+        "fit_preview": FIT_PREVIEW,
+        "pipeline_preview": PIPELINE_PREVIEW,
+        "bar_preview": BAR_PREVIEW,
+        "case_study": CASE_STUDY,
+        "posts": EXAMPLE_POSTS,
         "plans": PLANS,
         "faqs": FAQS,
     })
