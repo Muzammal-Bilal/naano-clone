@@ -3,7 +3,7 @@
 A rebuild of [naano.com](https://naano.com), the B2B LinkedIn creator marketplace,
 for the 8x assignment. Not affiliated with Naano.
 
-**Live:** _pending deploy_
+**Live:** https://muzammalbilal.pythonanywhere.com
 **Demo accounts:** `brand / demo1234` and `creator / demo1234` — both are also
 printed on the login page, so no signup is needed to see either side.
 
