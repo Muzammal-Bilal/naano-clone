@@ -20,8 +20,12 @@ def env_flag(name, default="0"):
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-insecure-key-do-not-ship")
 DEBUG = env_flag("DEBUG", "1")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".railway.app", ".onrender.com"]
-CSRF_TRUSTED_ORIGINS = ["https://*.railway.app", "https://*.onrender.com"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".railway.app", ".onrender.com", ".pythonanywhere.com"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.railway.app",
+    "https://*.onrender.com",
+    "https://*.pythonanywhere.com",
+]
 
 # Hosts publish the live domain under their own variable name. Reading all of
 # them keeps the app portable, which matters because the free tier a platform
