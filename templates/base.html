@@ -120,10 +120,10 @@
       <div class="flex items-center gap-2.5">
         {# Anchors are absolute so the nav still works from /login/ and /signup/. #}
         <div class="hidden lg:flex items-center gap-0.5 mr-3">
-          <a href="{% url 'home' %}#how" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition">For companies</a>
-          <a href="{% url 'home' %}#creators" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition">For creators</a>
-          <a href="{% url 'home' %}#agencies" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition">For agencies</a>
-          <a href="{% url 'home' %}#how" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition">How it works</a>
+          <a href="{% url 'home' %}#how" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For companies</a>
+          <a href="{% url 'home' %}#creators" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For creators</a>
+          <a href="{% url 'home' %}#agencies" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">For agencies</a>
+          <a href="{% url 'home' %}#how" class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition whitespace-nowrap">How it works</a>
 
           {% comment %}
           Opens on hover, as on the live site. The panel sits in a wrapper with
@@ -136,14 +136,16 @@
                @focusin="open = true" @focusout="open = false"
                @keydown.escape.window="open = false">
             <button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true"
-                    class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition flex items-center gap-1.5">
+                    class="px-3 py-2 rounded-full text-[15px] font-semibold text-ink/70 hover:text-ink hover:bg-black/5 transition flex items-center gap-1.5 whitespace-nowrap">
               Resources
               <span class="text-[10px] transition-transform duration-200" :class="open && 'rotate-180'">&#9660;</span>
             </button>
 
-            {# Visibility is a class toggle rather than x-show: x-show hands off
-               to Alpine's transition machinery, which left the panel stuck open
-               when a hover interrupted the leave. A class swap cannot get stuck. #}
+            {% comment %}
+            Visibility is a class toggle rather than x-show: x-show hands off to
+            Alpine's transition machinery, which left the panel stuck open when a
+            hover interrupted the leave. A class swap cannot get stuck.
+            {% endcomment %}
             <div x-cloak :class="open ? 'block' : 'hidden'"
                  class="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-64">
               <div class="bg-white rounded-2xl border border-black/[.07] card-shadow p-2">
@@ -171,13 +173,13 @@
           </span>
         </div>
         {% if user.is_authenticated %}
-          <a href="{% url 'dashboard' %}" class="px-5 h-11 grid place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition">Open app</a>
+          <a href="{% url 'dashboard' %}" class="px-5 h-11 grid place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition whitespace-nowrap">Open app</a>
           <form method="post" action="{% url 'logout' %}">{% csrf_token %}
             <button class="px-5 h-11 rounded-full bg-ink text-white font-semibold hover:bg-ink/90 transition">Sign out</button>
           </form>
         {% else %}
-          <a href="{% url 'login' %}" class="px-5 h-11 grid place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition">Sign in</a>
-          <a href="{% url 'signup' %}" class="px-5 h-11 grid place-items-center rounded-full bg-ink text-white font-semibold hover:bg-ink/90 transition">Sign up</a>
+          <a href="{% url 'login' %}" class="px-5 h-11 grid place-items-center rounded-full border border-black/10 font-semibold hover:bg-black/5 transition whitespace-nowrap">Sign in</a>
+          <a href="{% url 'signup' %}" class="px-5 h-11 grid place-items-center rounded-full bg-ink text-white font-semibold hover:bg-ink/90 transition whitespace-nowrap">Sign up</a>
         {% endif %}
       </div>
       {% endblock %}
