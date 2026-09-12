@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect, render
 
 from core.forms import SignupForm
-from core.models import Creator
+from core.models import Creator, compact
 from core.services import fit_score
 
 HOW_IT_WORKS = [
@@ -35,11 +35,23 @@ HOW_IT_WORKS = [
     },
 ]
 
+def _stat(value, label, style="compact"):
+    """A headline number the page counts up to.
+
+    `display` is the finished string rendered server-side, so the figure is
+    correct before Alpine loads and stays correct if it never does. It is
+    derived from `value` rather than written out, which keeps the animated
+    target and the static fallback from drifting apart.
+    """
+    display = compact(value) if style == "compact" else f"{value:,}"
+    return {"value": value, "style": style, "display": f"{display}+", "label": label}
+
+
 STATS = [
-    {"value": "5M+", "label": "Impressions generated"},
-    {"value": "30K+", "label": "Leads generated"},
-    {"value": "2,000+", "label": "Creators on Naano"},
-    {"value": "5K+", "label": "Posts published"},
+    _stat(5_000_000, "Impressions generated"),
+    _stat(30_000, "Leads generated"),
+    _stat(2_000, "Creators on Naano", style="comma"),
+    _stat(5_000, "Posts published"),
 ]
 
 

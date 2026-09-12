@@ -11,23 +11,29 @@
   <div class="mt-8 grid grid-cols-2 lg:grid-cols-5 gap-4">
     <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">IMPRESSIONS</p>
-      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.impressions|intcomma }}</p>
+      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+         x-data="countUp({{ totals.impressions }})" x-text="text">{{ totals.impressions|intcomma }}</p>
     </div>
     <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">CLICKS</p>
-      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.clicks|intcomma }}</p>
+      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+         x-data="countUp({{ totals.clicks }})" x-text="text">{{ totals.clicks|intcomma }}</p>
     </div>
     <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">CTR</p>
-      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.ctr }}%</p>
+      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+         x-data="countUp({{ totals.ctr }}, 'rate', '%')" x-text="text">{{ totals.ctr }}%</p>
     </div>
     <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">LEADS</p>
-      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.leads|intcomma }}</p>
+      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+         x-data="countUp({{ totals.leads }})" x-text="text">{{ totals.leads|intcomma }}</p>
     </div>
     <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">PIPELINE</p>
-      <p class="mt-1.5 text-3xl font-extrabold">&euro;{{ totals.pipeline|floatformat:0|intcomma }}</p>
+      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+         x-data="countUp({{ totals.pipeline|floatformat:'0' }}, 'euro')"
+         x-text="text">&euro;{{ totals.pipeline|floatformat:0|intcomma }}</p>
     </div>
   </div>
 

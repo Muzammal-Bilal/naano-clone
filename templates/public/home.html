@@ -110,7 +110,8 @@
     <div class="mt-14 grid gap-8 grid-cols-2 lg:grid-cols-4 text-center">
       {% for stat in stats %}
         <div>
-          <p class="text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold tracking-tight">{{ stat.value }}</p>
+          <p class="text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold tracking-tight tabular-nums"
+             x-data="countUp({{ stat.value }}, '{{ stat.style }}', '+')" x-text="text">{{ stat.display }}</p>
           <p class="mt-2 text-ink/60">{{ stat.label }}</p>
         </div>
       {% endfor %}

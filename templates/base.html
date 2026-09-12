@@ -26,6 +26,56 @@
   </script>
   <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script>
+    // Headline figures count up from zero when they scroll into view.
+    // This listener is deliberately not deferred: it has to be registered
+    // before the deferred Alpine bundle fires alpine:init.
+    document.addEventListener('alpine:init', () => {
+      const round = value => Math.round(value);
+      const trim = value => value.toFixed(1).replace(/\.0$/, '');
+      const STYLES = {
+        comma: value => round(value).toLocaleString('en-US'),
+        euro: value => '\u20AC' + round(value).toLocaleString('en-US'),
+        rate: value => value.toFixed(2),
+        compact: value => value >= 1e6 ? trim(value / 1e6) + 'M'
+                        : value >= 1e3 ? trim(value / 1e3) + 'K'
+                        : String(round(value)),
+      };
+
+      Alpine.data('countUp', (target, style = 'comma', suffix = '') => ({
+        text: '',
+        init() {
+          const format = STYLES[style] || STYLES.comma;
+          const paint = value => { this.text = format(value) + suffix };
+
+          // Motion here is decoration, so honour the OS preference by
+          // jumping straight to the final figure.
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return paint(target);
+          }
+
+          paint(0);
+          const observer = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            observer.disconnect();
+
+            const began = performance.now();
+            const frame = now => {
+              const progress = Math.min((now - began) / 1400, 1);
+              // Ease out quartic: fast enough to read as a jump, slow enough
+              // at the tail that the final number registers.
+              paint(target * (1 - Math.pow(1 - progress, 4)));
+              if (progress < 1) requestAnimationFrame(frame);
+              else paint(target);  // land on the exact figure, not an eased approximation
+            };
+            requestAnimationFrame(frame);
+          }, { threshold: 0.35 });
+
+          observer.observe(this.$el);
+        },
+      }));
+    });
+  </script>
 
   <style>
     /* Layered radial gradients read as soft cloud cover without shipping an image. */
