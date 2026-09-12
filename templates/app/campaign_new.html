@@ -1,0 +1,37 @@
+{% extends "app/base_app.html" %}
+{% block title %}New campaign | Naano{% endblock %}
+
+{% block app %}
+<div class="mx-auto max-w-2xl px-5 py-10">
+  <a href="{% url 'campaigns' %}" class="text-sm font-semibold text-ink/55 hover:text-ink transition">&larr; Back to campaigns</a>
+
+  <h1 class="mt-6 text-4xl font-extrabold tracking-[-0.03em]">Build a campaign brief.</h1>
+  <p class="mt-2 text-ink/55">
+    Answer these and Naano drafts the messages, guidelines and do's and don'ts.
+    You can edit everything afterwards.
+  </p>
+
+  <form method="post" class="mt-8 bg-white rounded-3xl card-shadow p-8 space-y-5">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}" class="block text-sm font-bold mb-1.5">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.help_text %}
+          <p class="mt-1 text-xs text-ink/45">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <button class="w-full rounded-full bg-ink text-white font-bold py-3.5 hover:bg-ink/90 transition">
+      Generate brief and continue
+    </button>
+  </form>
+</div>
+{% endblock %}

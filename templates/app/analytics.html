@@ -1,0 +1,108 @@
+{% extends "app/base_app.html" %}
+{% load humanize %}
+{% block title %}Analytics | Naano{% endblock %}
+
+{% block app %}
+<div class="mx-auto max-w-6xl px-5 py-10">
+
+  <h1 class="text-4xl font-extrabold tracking-[-0.03em]">Analytics.</h1>
+  <p class="mt-2 text-ink/55">Every post carries a tracked link, so spend maps to a creator.</p>
+
+  <div class="mt-8 grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+      <p class="text-[10px] font-bold tracking-widest text-ink/40">IMPRESSIONS</p>
+      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.impressions|intcomma }}</p>
+    </div>
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+      <p class="text-[10px] font-bold tracking-widest text-ink/40">CLICKS</p>
+      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.clicks|intcomma }}</p>
+    </div>
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+      <p class="text-[10px] font-bold tracking-widest text-ink/40">CTR</p>
+      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.ctr }}%</p>
+    </div>
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+      <p class="text-[10px] font-bold tracking-widest text-ink/40">LEADS</p>
+      <p class="mt-1.5 text-3xl font-extrabold">{{ totals.leads|intcomma }}</p>
+    </div>
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+      <p class="text-[10px] font-bold tracking-widest text-ink/40">PIPELINE</p>
+      <p class="mt-1.5 text-3xl font-extrabold">&euro;{{ totals.pipeline|floatformat:0|intcomma }}</p>
+    </div>
+  </div>
+
+  <div class="mt-6 bg-white rounded-3xl border border-black/5 card-shadow p-8">
+    <h2 class="text-sm font-bold tracking-widest text-ink/40">DAILY PERFORMANCE</h2>
+    <div class="mt-5 h-72"><canvas id="performance"></canvas></div>
+  </div>
+
+  <h2 class="mt-12 text-sm font-bold tracking-widest text-ink/40">BY CAMPAIGN</h2>
+  <div class="mt-4 bg-white rounded-3xl border border-black/5 card-shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-black/[.02] text-left">
+          <tr class="text-[10px] font-bold tracking-widest text-ink/40">
+            <th class="px-6 py-3.5">CAMPAIGN</th>
+            <th class="px-6 py-3.5 text-right">SPEND</th>
+            <th class="px-6 py-3.5 text-right">IMPRESSIONS</th>
+            <th class="px-6 py-3.5 text-right">CLICKS</th>
+            <th class="px-6 py-3.5 text-right">LEADS</th>
+            <th class="px-6 py-3.5 text-right">PIPELINE</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-black/5">
+          {% for campaign in campaigns %}
+            <tr class="hover:bg-black/[.015]">
+              <td class="px-6 py-4">
+                <a href="{% url 'campaign_detail' campaign.pk %}" class="font-bold hover:underline">{{ campaign.name }}</a>
+              </td>
+              <td class="px-6 py-4 text-right">&euro;{{ campaign.spend|default:0|floatformat:0|intcomma }}</td>
+              <td class="px-6 py-4 text-right">{{ campaign.impressions|default:0|intcomma }}</td>
+              <td class="px-6 py-4 text-right">{{ campaign.clicks|default:0|intcomma }}</td>
+              <td class="px-6 py-4 text-right">{{ campaign.leads|default:0|intcomma }}</td>
+              <td class="px-6 py-4 text-right font-bold">&euro;{{ campaign.pipeline|default:0|floatformat:0|intcomma }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="px-6 py-14 text-center text-ink/50">No campaign data yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block body_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{{ chart|json_script:"chart-data" }}
+<script>
+  const data = JSON.parse(document.getElementById('chart-data').textContent);
+  const line = (label, values, color, axis) => ({
+    label, data: values, borderColor: color, backgroundColor: color + '1a',
+    borderWidth: 2, pointRadius: 0, tension: .35, fill: label === 'Impressions', yAxisID: axis,
+  });
+
+  new Chart(document.getElementById('performance'), {
+    type: 'line',
+    data: {
+      labels: data.labels,
+      datasets: [
+        line('Impressions', data.impressions, '#2E90FA', 'y'),
+        line('Clicks', data.clicks, '#0A0D14', 'y1'),
+        line('Leads', data.leads, '#10B981', 'y1'),
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6 } } },
+      scales: {
+        x: { grid: { display: false } },
+        // Impressions dwarf clicks and leads, so those get their own axis.
+        y: { position: 'left', beginAtZero: true, grid: { color: 'rgba(10,13,20,.05)' } },
+        y1: { position: 'right', beginAtZero: true, grid: { display: false } },
+      },
+    },
+  });
+</script>
+{% endblock %}

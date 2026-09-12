@@ -16,6 +16,10 @@ urlpatterns = [
 
     path("app/discover/", brand.discover, name="discover"),
     path("app/creators/<int:pk>/", brand.creator_detail, name="creator_detail"),
+    path("app/campaigns/", brand.campaigns, name="campaigns"),
+    path("app/campaigns/new/", brand.campaign_new, name="campaign_new"),
+    path("app/campaigns/<int:pk>/", brand.campaign_detail, name="campaign_detail"),
+    path("app/analytics/", brand.analytics, name="analytics"),
 
     path("app/deals/", creator.deals, name="creator_deals"),
     path("app/deals/<int:pk>/", creator.deal_detail, name="creator_deal_detail"),

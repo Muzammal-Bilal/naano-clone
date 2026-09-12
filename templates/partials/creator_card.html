@@ -7,7 +7,8 @@ grid, so the two never drift apart.
   <div class="bg-sky-100 px-4 py-3 flex items-center justify-between">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2" aria-hidden="true"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9.5h3V19ZM6.5 8.2a1.7 1.7 0 1 1 0-3.5 1.7 1.7 0 0 1 0 3.5ZM19 19h-3v-5c0-1.2-.5-2-1.6-2-.9 0-1.4.6-1.6 1.2V19h-3V9.5h3v1.3c.4-.7 1.4-1.6 3-1.6 2.2 0 3.2 1.4 3.2 4.2V19Z"/></svg>
     {% if booking_action %}
-      <button class="text-xs font-bold bg-white rounded-full px-4 py-1.5 hover:bg-ink hover:text-white transition">Book</button>
+      {% comment %}A span, not a button: the whole card is already a link.{% endcomment %}
+      <span class="text-xs font-bold bg-white rounded-full px-4 py-1.5">Book</span>
     {% else %}
       <span class="text-xs font-bold text-ink/40">naano</span>
     {% endif %}

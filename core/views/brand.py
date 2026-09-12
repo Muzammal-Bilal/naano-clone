@@ -1,15 +1,18 @@
 """Brand side: discover creators, run campaigns, read the results."""
 
+from decimal import Decimal
 from functools import wraps
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 
-from core.models import COUNTRIES, Creator, Topic
-from core.services import fit_score
+from core.forms import CampaignForm
+from core.models import COUNTRIES, Booking, Campaign, Creator, PostMetric, Topic
+from core.services import fit_score, generate_brief
 
 SORTS = {
     "fit": "Best fit",
@@ -98,6 +101,7 @@ def discover(request, brand):
         "selected_topics": [int(t) for t in request.GET.getlist("topic") if t.isdigit()],
         "selected_countries": request.GET.getlist("country"),
         "params": request.GET,
+        "nav": "discover",
     }
 
     # HTMX swaps just the results, so filtering never reloads the page.
@@ -114,4 +118,155 @@ def creator_detail(request, brand, pk):
         list(brand.icp_topics.values_list("id", flat=True)),
         brand.target_countries,
     )
-    return render(request, "app/creator_detail.html", {"creator": creator})
+
+    if request.method == "POST":
+        campaign = get_object_or_404(
+            Campaign, pk=request.POST.get("campaign"), brand=brand
+        )
+        booking, created = Booking.objects.get_or_create(
+            campaign=campaign, creator=creator,
+            defaults={"price": creator.price_per_post},
+        )
+        if created:
+            messages.success(
+                request, f"{creator.display_name} invited to {campaign.name}."
+            )
+        else:
+            messages.info(request, f"Already booked on {campaign.name}.")
+        return redirect("campaign_detail", pk=campaign.pk)
+
+    return render(request, "app/creator_detail.html", {
+        "creator": creator,
+        "campaigns": brand.campaigns.exclude(status=Campaign.Status.COMPLETED),
+        "booked_on": set(
+            Booking.objects.filter(creator=creator, campaign__brand=brand)
+            .values_list("campaign_id", flat=True)
+        ),
+    })
+
+
+@brand_required
+def campaigns(request, brand):
+    return render(request, "app/campaigns.html", {
+        "campaigns": brand.campaigns.prefetch_related("bookings__creator"),
+        "nav": "campaigns",
+    })
+
+
+@brand_required
+def campaign_new(request, brand):
+    form = CampaignForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        campaign = form.save(commit=False)
+        campaign.brand = brand
+        # Draft the brief copy from the structured inputs the brand just gave us.
+        for field, value in generate_brief(
+            brand.company_name, campaign.objective, campaign.product_description
+        ).items():
+            setattr(campaign, field, value)
+        campaign.save()
+        messages.success(request, "Campaign created. Now add creators to it.")
+        return redirect("campaign_detail", pk=campaign.pk)
+
+    return render(request, "app/campaign_new.html", {"form": form, "nav": "campaigns"})
+
+
+@brand_required
+def campaign_detail(request, brand, pk):
+    campaign = get_object_or_404(
+        Campaign.objects.prefetch_related("bookings__creator", "bookings__metrics"),
+        pk=pk, brand=brand,
+    )
+
+    if request.method == "POST":
+        booking = get_object_or_404(
+            Booking, pk=request.POST.get("booking"), campaign=campaign
+        )
+        target = request.POST.get("status")
+        if target in Booking.Status.values:
+            booking.status = target
+            booking.save(update_fields=["status"])
+            messages.success(
+                request,
+                f"{booking.creator.display_name} moved to {booking.get_status_display()}.",
+            )
+        return redirect("campaign_detail", pk=campaign.pk)
+
+    bookings = list(campaign.bookings.all())
+    return render(request, "app/campaign_detail.html", {
+        "campaign": campaign,
+        "columns": [
+            (status, status.label, [b for b in bookings if b.status == status])
+            for status in Booking.PIPELINE
+        ],
+        "declined": [b for b in bookings if b.status == Booking.Status.DECLINED],
+        "totals": _rollup(bookings),
+        "nav": "campaigns",
+    })
+
+
+def _rollup(bookings):
+    """Sum daily metrics across a set of bookings."""
+    totals = {"impressions": 0, "clicks": 0, "leads": 0, "pipeline": Decimal("0")}
+    for booking in bookings:
+        for metric in booking.metrics.all():
+            totals["impressions"] += metric.impressions
+            totals["clicks"] += metric.clicks
+            totals["leads"] += metric.leads
+            totals["pipeline"] += metric.pipeline_value
+    return totals
+
+
+@brand_required
+def analytics(request, brand):
+    metrics = (
+        PostMetric.objects
+        .filter(booking__campaign__brand=brand)
+        .values("date")
+        .annotate(
+            impressions=Sum("impressions"),
+            clicks=Sum("clicks"),
+            leads=Sum("leads"),
+            pipeline=Sum("pipeline_value"),
+        )
+        .order_by("date")
+    )
+    series = list(metrics)
+
+    per_campaign = (
+        Campaign.objects
+        .filter(brand=brand)
+        .annotate(
+            impressions=Sum("bookings__metrics__impressions"),
+            clicks=Sum("bookings__metrics__clicks"),
+            leads=Sum("bookings__metrics__leads"),
+            pipeline=Sum("bookings__metrics__pipeline_value"),
+            spend=Sum("bookings__price", distinct=True),
+        )
+        .order_by("-pipeline")
+    )
+
+    totals = {
+        "impressions": sum(row["impressions"] for row in series),
+        "clicks": sum(row["clicks"] for row in series),
+        "leads": sum(row["leads"] for row in series),
+        "pipeline": sum((row["pipeline"] for row in series), Decimal("0")),
+    }
+    totals["ctr"] = (
+        round(totals["clicks"] / totals["impressions"] * 100, 2)
+        if totals["impressions"] else 0
+    )
+
+    return render(request, "app/analytics.html", {
+        "totals": totals,
+        "campaigns": per_campaign,
+        # Passed as a dict, not a JSON string: json_script serialises it, and
+        # double-encoding would hand the page a string where it expects an object.
+        "chart": {
+            "labels": [row["date"].strftime("%d %b") for row in series],
+            "impressions": [row["impressions"] for row in series],
+            "clicks": [row["clicks"] for row in series],
+            "leads": [row["leads"] for row in series],
+        },
+        "nav": "analytics",
+    })

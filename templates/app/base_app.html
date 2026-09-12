@@ -7,6 +7,8 @@
     <a href="{% url 'creator_earnings' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'earnings' %}bg-black/5{% endif %}">Earnings</a>
   {% else %}
     <a href="{% url 'discover' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'discover' %}bg-black/5{% endif %}">Discover</a>
+    <a href="{% url 'campaigns' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'campaigns' %}bg-black/5{% endif %}">Campaigns</a>
+    <a href="{% url 'analytics' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'analytics' %}bg-black/5{% endif %}">Analytics</a>
   {% endif %}
 
   <form method="post" action="{% url 'logout' %}" class="ml-3">{% csrf_token %}

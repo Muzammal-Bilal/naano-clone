@@ -67,13 +67,32 @@
         </div>
       </div>
 
-      <div class="border-t border-black/5 p-8 sm:p-10 flex flex-wrap items-center justify-between gap-5">
+      <div class="border-t border-black/5 p-8 sm:p-10">
         <p class="text-sm text-ink/55">
           Roughly <strong class="text-ink">&euro;{{ creator.cost_per_view }}</strong> per view at their median reach.
         </p>
-        <button class="rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
-          Add to a campaign
-        </button>
+
+        {% if campaigns %}
+          <form method="post" class="mt-5 flex flex-wrap gap-3">
+            {% csrf_token %}
+            <select name="campaign" aria-label="Campaign"
+                    class="flex-1 min-w-[200px] rounded-2xl border border-black/10 px-4 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+              {% for campaign in campaigns %}
+                <option value="{{ campaign.pk }}" {% if campaign.pk in booked_on %}disabled{% endif %}>
+                  {{ campaign.name }}{% if campaign.pk in booked_on %} — already booked{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+            <button class="rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
+              Invite at &euro;{{ creator.price_per_post|floatformat:0 }}
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'campaign_new' %}"
+             class="mt-5 inline-block rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
+            Create a campaign first
+          </a>
+        {% endif %}
       </div>
     </div>
   </div>
