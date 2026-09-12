@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Sign up | Naano{% endblock %}
+{% block nav %}{% endblock %}
+
+{% block content %}
+<section class="cloudscape min-h-[calc(100vh-72px)] grid place-items-center px-5 py-16">
+  <div class="w-full max-w-md bg-white rounded-3xl p-8 card-shadow"
+       x-data="{ role: '{{ form.role.value|default:'brand' }}' }">
+
+    <h1 class="text-3xl font-extrabold tracking-tight">Create your account.</h1>
+    <p class="mt-2 text-ink/55">Start free. Pay per post when you're ready.</p>
+
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-2 gap-2 bg-black/[.04] rounded-2xl p-1.5">
+        {% for value, label in form.fields.role.choices %}
+          <label class="cursor-pointer">
+            <input type="radio" name="role" value="{{ value }}" x-model="role" class="sr-only">
+            <span class="block text-center text-sm font-bold rounded-xl py-2.5 transition"
+                  :class="role === '{{ value }}' ? 'bg-white shadow-sm' : 'text-ink/50'">{{ label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-semibold mb-1.5">Full name</label>
+        {{ form.full_name }}
+        {% for error in form.full_name.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ form.context.id_for_label }}" class="block text-sm font-semibold mb-1.5">
+          <span x-show="role === 'brand'">Company</span>
+          <span x-show="role === 'creator'" x-cloak>Your LinkedIn headline</span>
+        </label>
+        {{ form.context }}
+      </div>
+
+      <div>
+        <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold mb-1.5">Work email</label>
+        {{ form.email }}
+        {% for error in form.email.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ form.password.id_for_label }}" class="block text-sm font-semibold mb-1.5">Password</label>
+        {{ form.password }}
+        {% for error in form.password.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+      </div>
+
+      <button class="w-full rounded-full bg-ink text-white font-bold py-3.5 hover:bg-ink/90 transition">
+        Create account
+      </button>
+    </form>
+
+    <p class="mt-5 text-sm text-center text-ink/55">
+      Already have an account? <a href="{% url 'login' %}" class="font-semibold text-ink underline">Sign in</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

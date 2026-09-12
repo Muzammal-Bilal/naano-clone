@@ -1,0 +1,74 @@
+{% extends "app/base_app.html" %}
+{% block title %}{{ booking.campaign.name }} | Naano{% endblock %}
+
+{% block app %}
+<div class="mx-auto max-w-3xl px-5 py-10">
+  <a href="{% url 'creator_deals' %}" class="text-sm font-semibold text-ink/55 hover:text-ink transition">&larr; Back to deals</a>
+
+  <div class="mt-6 bg-white rounded-3xl card-shadow p-8">
+    <div class="flex items-start justify-between gap-5 flex-wrap">
+      <div>
+        <p class="text-xs font-bold tracking-widest text-ink/40">{{ booking.campaign.brand.company_name|upper }}</p>
+        <h1 class="mt-2 text-3xl font-extrabold tracking-tight">{{ booking.campaign.name }}</h1>
+      </div>
+      <div class="text-right">
+        <p class="text-3xl font-extrabold">&euro;{{ booking.price|floatformat:0 }}</p>
+        <p class="text-xs text-ink/45 mt-0.5">{{ booking.campaign.get_pricing_model_display }}</p>
+      </div>
+    </div>
+
+    <div class="mt-8 space-y-6">
+      <div>
+        <h2 class="text-sm font-bold tracking-widest text-ink/40">KEY MESSAGES</h2>
+        <p class="mt-2 whitespace-pre-line text-ink/75 leading-relaxed">{{ booking.campaign.key_messages }}</p>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold tracking-widest text-ink/40">GUIDELINES</h2>
+        <p class="mt-2 text-ink/75 leading-relaxed">{{ booking.campaign.guidelines }}</p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div>
+          <h2 class="text-sm font-bold tracking-widest text-emerald-700">DO</h2>
+          <p class="mt-2 whitespace-pre-line text-sm text-ink/70 leading-relaxed">{{ booking.campaign.dos }}</p>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold tracking-widest text-red-600">DON'T</h2>
+          <p class="mt-2 whitespace-pre-line text-sm text-ink/70 leading-relaxed">{{ booking.campaign.donts }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-8 border-t border-black/5">
+      {% if booking.status == 'invited' %}
+        <form method="post" class="flex flex-wrap gap-3">
+          {% csrf_token %}
+          <button name="action" value="accept"
+                  class="rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
+            Accept this deal
+          </button>
+          <button name="action" value="decline"
+                  class="rounded-full border border-black/10 font-bold px-7 py-3.5 hover:bg-black/5 transition">
+            Decline
+          </button>
+        </form>
+
+      {% elif booking.status == 'declined' %}
+        <p class="text-ink/50">You declined this deal.</p>
+
+      {% else %}
+        <form method="post">
+          {% csrf_token %}
+          <label for="draft_content" class="block text-sm font-bold mb-2">Your draft post</label>
+          <textarea name="draft_content" id="draft_content" rows="7"
+                    placeholder="Write it in your own voice."
+                    class="w-full rounded-2xl border border-black/10 px-4 py-3 leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">{{ booking.draft_content }}</textarea>
+          <button name="action" value="submit_draft"
+                  class="mt-4 rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
+            {% if booking.draft_content %}Update draft{% else %}Send draft to brand{% endif %}
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

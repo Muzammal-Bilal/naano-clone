@@ -1,13 +1,11 @@
-"""Views for the naano clone.
+"""Public pages: the marketing site and the way in."""
 
-Server-rendered. HTMX swaps partials for the marketplace filters rather than
-running a separate client app.
-"""
+from django.contrib.auth import login
+from django.shortcuts import redirect, render
 
-from django.shortcuts import render
-
-from .models import Creator
-from .services import fit_score
+from core.forms import SignupForm
+from core.models import Creator
+from core.services import fit_score
 
 HOW_IT_WORKS = [
     {
@@ -57,3 +55,15 @@ def home(request):
         "steps": HOW_IT_WORKS,
         "stats": STATS,
     })
+
+
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+
+    form = SignupForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        login(request, form.save())
+        return redirect("dashboard")
+
+    return render(request, "auth/signup.html", {"form": form})

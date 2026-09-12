@@ -1,0 +1,100 @@
+{% extends "app/base_app.html" %}
+{% block title %}Discover creators | Naano{% endblock %}
+
+{% block app %}
+<div class="mx-auto max-w-7xl px-5 py-10">
+
+  <h1 class="text-4xl font-extrabold tracking-[-0.03em]">Discover creators.</h1>
+  <p class="mt-2 text-ink/55">Ranked by fit with your audience, not by follower count.</p>
+
+  {% comment %}
+  One form drives every filter. hx-get on the form means any change re-runs the
+  same querystring the server already understands, so the page and the partial
+  can never disagree about what is being filtered.
+  {% endcomment %}
+  <form id="filters"
+        hx-get="{% url 'discover' %}"
+        hx-target="#results"
+        hx-swap="innerHTML"
+        hx-trigger="change, keyup from:#q delay:350ms, submit"
+        hx-push-url="true"
+        hx-indicator="#loading"
+        class="mt-8 grid lg:grid-cols-[280px_1fr] gap-8 items-start">
+
+    <aside class="bg-white rounded-3xl border border-black/5 card-shadow p-6 space-y-6 lg:sticky lg:top-24">
+      <div>
+        <label for="q" class="block text-sm font-bold mb-2">Search</label>
+        <input type="search" name="q" id="q" value="{{ params.q }}" placeholder="Name, headline, bio"
+               class="w-full rounded-2xl border border-black/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+      </div>
+
+      <div>
+        <span class="block text-sm font-bold mb-2">Topics</span>
+        <div class="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+          {% for topic in topics %}
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+              <input type="checkbox" name="topic" value="{{ topic.id }}"
+                     {% if topic.id in selected_topics %}checked{% endif %}
+                     class="rounded border-black/20 text-[#2E90FA] focus:ring-[#2E90FA]/40">
+              <span class="text-ink/70">{{ topic.name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <span class="block text-sm font-bold mb-2">Country</span>
+        <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+          {% for code, name in countries %}
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+              <input type="checkbox" name="country" value="{{ code }}"
+                     {% if code in selected_countries %}checked{% endif %}
+                     class="rounded border-black/20 text-[#2E90FA] focus:ring-[#2E90FA]/40">
+              <span class="text-ink/70">{{ name }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <label for="max_price" class="block text-sm font-bold mb-2">Max price per post</label>
+        <input type="number" name="max_price" id="max_price" value="{{ params.max_price }}" min="0" step="50" placeholder="Any"
+               class="w-full rounded-2xl border border-black/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+      </div>
+
+      <div>
+        <label for="min_followers" class="block text-sm font-bold mb-2">Min followers</label>
+        <input type="number" name="min_followers" id="min_followers" value="{{ params.min_followers }}" min="0" step="1000" placeholder="Any"
+               class="w-full rounded-2xl border border-black/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+      </div>
+
+      <a href="{% url 'discover' %}" class="block text-center text-sm font-semibold text-ink/50 hover:text-ink transition">
+        Clear all filters
+      </a>
+    </aside>
+
+    <div>
+      <div class="flex items-center justify-between gap-4 mb-5">
+        <span id="loading" class="htmx-indicator text-sm text-ink/55">Filtering&hellip;</span>
+        <label class="flex items-center gap-2 text-sm ml-auto">
+          <span class="font-semibold">Sort</span>
+          <select name="sort" class="rounded-full border border-black/10 px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+            {% for value, label in sorts.items %}
+              <option value="{{ value }}" {% if params.sort == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+
+      <div id="results">
+        {% include "partials/creator_results.html" %}
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>
+  .htmx-indicator { opacity: 0; }
+  .htmx-request .htmx-indicator { opacity: 1; }
+</style>
+{% endblock %}

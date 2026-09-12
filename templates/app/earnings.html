@@ -1,0 +1,35 @@
+{% extends "app/base_app.html" %}
+{% block title %}Earnings | Naano{% endblock %}
+
+{% block app %}
+<div class="mx-auto max-w-3xl px-5 py-10">
+  <h1 class="text-4xl font-extrabold tracking-[-0.03em]">Earnings.</h1>
+  <p class="mt-2 text-ink/55">Paid within 24 hours of a post going live. No invoice required.</p>
+
+  <div class="mt-8 grid sm:grid-cols-2 gap-4">
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-7">
+      <p class="text-xs font-bold tracking-widest text-ink/40">PAID OUT</p>
+      <p class="mt-2 text-4xl font-extrabold">&euro;{{ paid_total|floatformat:0 }}</p>
+    </div>
+    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-7">
+      <p class="text-xs font-bold tracking-widest text-ink/40">IN PROGRESS</p>
+      <p class="mt-2 text-4xl font-extrabold">&euro;{{ pending_total|floatformat:0 }}</p>
+    </div>
+  </div>
+
+  <h2 class="mt-10 text-sm font-bold tracking-widest text-ink/40">PAYOUT HISTORY</h2>
+  <div class="mt-4 bg-white rounded-3xl border border-black/5 card-shadow divide-y divide-black/5">
+    {% for payout in payouts %}
+      <div class="flex items-center justify-between gap-5 px-6 py-4">
+        <div class="min-w-0">
+          <p class="font-semibold truncate">{{ payout.note }}</p>
+          <p class="text-xs text-ink/45 mt-0.5">{{ payout.created_at|date:"j M Y" }}</p>
+        </div>
+        <p class="font-extrabold shrink-0">+&euro;{{ payout.amount|floatformat:0 }}</p>
+      </div>
+    {% empty %}
+      <p class="px-6 py-14 text-center text-ink/50">No payouts yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

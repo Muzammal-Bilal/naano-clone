@@ -1,0 +1,21 @@
+{% comment %}One booking, as a row in the creator's deal list.{% endcomment %}
+<a href="{% url 'creator_deal_detail' booking.pk %}"
+   class="flex items-center gap-5 bg-white rounded-3xl border border-black/5 card-shadow px-6 py-5 hover:border-ink/15 transition">
+
+  <div class="flex-1 min-w-0">
+    <p class="font-extrabold tracking-tight truncate">{{ booking.campaign.name }}</p>
+    <p class="mt-0.5 text-sm text-ink/55 truncate">
+      {{ booking.campaign.brand.company_name }} &middot; {{ booking.campaign.get_objective_display }}
+    </p>
+  </div>
+
+  <span class="shrink-0 text-xs font-bold rounded-full px-3 py-1.5
+    {% if booking.status == 'invited' %}bg-amber-50 text-amber-700
+    {% elif booking.status == 'live' %}bg-emerald-50 text-emerald-700
+    {% elif booking.status == 'declined' %}bg-black/5 text-ink/50
+    {% else %}bg-sky-100 text-ink/70{% endif %}">
+    {{ booking.get_status_display }}
+  </span>
+
+  <p class="shrink-0 font-extrabold w-20 text-right">&euro;{{ booking.price|floatformat:0 }}</p>
+</a>

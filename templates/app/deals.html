@@ -1,0 +1,35 @@
+{% extends "app/base_app.html" %}
+{% block title %}Your deals | Naano{% endblock %}
+
+{% block app %}
+<div class="mx-auto max-w-5xl px-5 py-10">
+  <h1 class="text-4xl font-extrabold tracking-[-0.03em]">Your deals.</h1>
+  <p class="mt-2 text-ink/55">Accept the ones that fit your audience. Skip the rest, no penalty.</p>
+
+  {% if invited %}
+    <h2 class="mt-10 text-sm font-bold tracking-widest text-ink/40">NEEDS YOUR ANSWER</h2>
+    <div class="mt-4 space-y-3">
+      {% for booking in invited %}{% include "partials/deal_row.html" %}{% endfor %}
+    </div>
+  {% endif %}
+
+  <h2 class="mt-10 text-sm font-bold tracking-widest text-ink/40">IN PROGRESS</h2>
+  <div class="mt-4 space-y-3">
+    {% for booking in active %}
+      {% include "partials/deal_row.html" %}
+    {% empty %}
+      <div class="bg-white rounded-3xl border border-black/5 py-14 text-center">
+        <p class="font-bold">Nothing in progress.</p>
+        <p class="mt-1.5 text-sm text-ink/50">Accepted deals will show up here.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if closed %}
+    <h2 class="mt-10 text-sm font-bold tracking-widest text-ink/40">CLOSED</h2>
+    <div class="mt-4 space-y-3 opacity-60">
+      {% for booking in closed %}{% include "partials/deal_row.html" %}{% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

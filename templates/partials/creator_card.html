@@ -19,7 +19,10 @@ grid, so the two never drift apart.
 
     <h3 class="mt-4 font-extrabold tracking-tight">{{ creator.display_name }}</h3>
     <p class="mt-1 text-xs text-ink/50">{{ creator.headline }}</p>
-    <p class="mt-2 text-xs font-semibold">{{ creator.flag }} {{ creator.country_name }}</p>
+    <p class="mt-2 text-xs font-semibold flex items-center justify-center gap-1.5">
+      <img src="{{ creator.flag_url }}" alt="" width="16" height="12" class="rounded-[2px]">
+      {{ creator.country_name }}
+    </p>
 
     <p class="mt-3 text-xs text-ink/45 leading-relaxed line-clamp-2">{{ creator.bio }}</p>
 

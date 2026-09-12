@@ -18,12 +18,16 @@ COUNTRIES = {
 }
 
 
-def flag(country_code):
-    """ISO-3166 alpha-2 to its regional-indicator emoji. Beats shipping a flag sprite."""
-    code = (country_code or "").strip().upper()
+def flag_url(country_code):
+    """Flag as an image, not a regional-indicator emoji.
+
+    Windows renders those emoji as bare letters ("FR"), and we cannot assume
+    what the reviewer is on.
+    """
+    code = (country_code or "").strip().lower()
     if len(code) != 2 or not code.isalpha():
         return ""
-    return "".join(chr(0x1F1E6 + ord(char) - ord("A")) for char in code)
+    return f"https://flagcdn.com/w20/{code}.png"
 
 
 def compact(number):
@@ -73,8 +77,8 @@ class Creator(models.Model):
         return self.display_name
 
     @property
-    def flag(self):
-        return flag(self.country)
+    def flag_url(self):
+        return flag_url(self.country)
 
     @property
     def country_name(self):

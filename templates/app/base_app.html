@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<div class="flex items-center gap-1">
+  {% if user.creator %}
+    <a href="{% url 'creator_deals' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'deals' %}bg-black/5{% endif %}">Deals</a>
+    <a href="{% url 'creator_earnings' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'earnings' %}bg-black/5{% endif %}">Earnings</a>
+  {% else %}
+    <a href="{% url 'discover' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'discover' %}bg-black/5{% endif %}">Discover</a>
+  {% endif %}
+
+  <form method="post" action="{% url 'logout' %}" class="ml-3">{% csrf_token %}
+    <button class="px-5 h-11 rounded-full border border-black/10 font-semibold hover:bg-black/5 transition">Sign out</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block content %}
+  {% if messages %}
+    <div class="mx-auto max-w-7xl px-5 pt-6 space-y-2">
+      {% for message in messages %}
+        <p class="rounded-2xl px-4 py-3 text-sm font-medium
+                  {% if message.tags == 'success' %}bg-emerald-50 text-emerald-800
+                  {% elif message.tags == 'error' %}bg-red-50 text-red-700
+                  {% else %}bg-sky-100 text-ink{% endif %}">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% block app %}{% endblock %}
+{% endblock %}
