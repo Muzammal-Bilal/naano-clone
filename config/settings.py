@@ -114,3 +114,10 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    # Safe to redirect because the proxy header above is what tells Django the
+    # request already arrived over TLS; without it this would loop.
+    SECURE_SSL_REDIRECT = True
+    # Deliberately one hour rather than the usual year. This runs on a borrowed
+    # subdomain, and pinning a browser to HTTPS for months on a host we may not
+    # keep is a promise the project cannot make.
+    SECURE_HSTS_SECONDS = 3600

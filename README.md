@@ -63,9 +63,18 @@ core/
   services.py     fit scoring and brief generation
   forms.py        signup and campaign creation
   views/          public.py, brand.py, creator.py
+  tests.py        access control, object ownership, booking lifecycle
   management/commands/seed_demo.py
 templates/  base, public/, app/, auth/, partials/
 ```
+
+`python manage.py test core` runs 22 tests. They cover the things that fail
+silently rather than visibly: one account reading or writing another's data, and
+the booking lifecycle accepting transitions it should refuse. Layout is not
+tested, because a broken layout is obvious and a broken permission is not. Two
+real bugs came out of writing them — a declined deal could be pulled back into
+the pipeline by posting a draft to it, and an empty draft was accepted as a
+submission.
 
 Decisions worth explaining:
 

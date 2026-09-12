@@ -10,6 +10,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from core.models import Booking, Transaction
 
+# A draft is only meaningful between accepting the deal and the brand scheduling
+# it. Every other state is either too early, already published, or closed.
+DRAFTABLE = (Booking.Status.ACCEPTED, Booking.Status.DRAFT)
+
 
 def creator_required(view):
     @wraps(view)
@@ -53,15 +57,25 @@ def deal_detail(request, creator, pk):
         action = request.POST.get("action")
         if action == "accept" and booking.status == Booking.Status.INVITED:
             booking.status = Booking.Status.ACCEPTED
+            booking.save(update_fields=["status"])
             messages.success(request, "Deal accepted. Draft your post when ready.")
         elif action == "decline" and booking.status == Booking.Status.INVITED:
             booking.status = Booking.Status.DECLINED
+            booking.save(update_fields=["status"])
             messages.info(request, "Deal declined.")
         elif action == "submit_draft":
-            booking.draft_content = request.POST.get("draft_content", "").strip()
-            booking.status = Booking.Status.DRAFT
-            messages.success(request, "Draft sent to the brand for review.")
-        booking.save()
+            content = request.POST.get("draft_content", "").strip()
+            if booking.status not in DRAFTABLE:
+                # Without this a declined or completed deal could be pulled back
+                # into the pipeline by posting to this endpoint.
+                messages.error(request, "This deal is no longer open for drafts.")
+            elif not content:
+                messages.error(request, "Write the post before sending it over.")
+            else:
+                booking.draft_content = content
+                booking.status = Booking.Status.DRAFT
+                booking.save(update_fields=["draft_content", "status"])
+                messages.success(request, "Draft sent to the brand for review.")
         return redirect("creator_deal_detail", pk=booking.pk)
 
     return render(request, "app/deal_detail.html", {"booking": booking})
