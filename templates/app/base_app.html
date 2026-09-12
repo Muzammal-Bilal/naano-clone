@@ -1,18 +1,26 @@
 {% extends "base.html" %}
 
+{% comment %}
+The signed-in shell. Section links sit in the header on tablet and up, but a
+phone cannot fit the logo, three links and Sign out on one row, so below `sm`
+they move to a bottom tab bar and the header keeps only the logo and Sign out.
+{% endcomment %}
+
 {% block nav %}
 <div class="flex items-center gap-1">
-  {% if user.creator %}
-    <a href="{% url 'creator_deals' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'deals' %}bg-black/5{% endif %}">Deals</a>
-    <a href="{% url 'creator_earnings' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'earnings' %}bg-black/5{% endif %}">Earnings</a>
-  {% else %}
-    <a href="{% url 'discover' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'discover' %}bg-black/5{% endif %}">Discover</a>
-    <a href="{% url 'campaigns' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'campaigns' %}bg-black/5{% endif %}">Campaigns</a>
-    <a href="{% url 'analytics' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'analytics' %}bg-black/5{% endif %}">Analytics</a>
-  {% endif %}
+  <div class="hidden sm:flex items-center gap-1">
+    {% if user.creator %}
+      <a href="{% url 'creator_deals' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'deals' %}bg-black/5{% endif %}">Deals</a>
+      <a href="{% url 'creator_earnings' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'earnings' %}bg-black/5{% endif %}">Earnings</a>
+    {% else %}
+      <a href="{% url 'discover' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'discover' %}bg-black/5{% endif %}">Discover</a>
+      <a href="{% url 'campaigns' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'campaigns' %}bg-black/5{% endif %}">Campaigns</a>
+      <a href="{% url 'analytics' %}" class="px-4 py-2 rounded-full font-semibold text-[15px] hover:bg-black/5 transition {% if nav == 'analytics' %}bg-black/5{% endif %}">Analytics</a>
+    {% endif %}
+  </div>
 
-  <form method="post" action="{% url 'logout' %}" class="ml-3">{% csrf_token %}
-    <button class="px-5 h-11 rounded-full border border-black/10 font-semibold hover:bg-black/5 transition">Sign out</button>
+  <form method="post" action="{% url 'logout' %}" class="sm:ml-3">{% csrf_token %}
+    <button class="px-5 h-11 rounded-full border border-black/10 font-semibold hover:bg-black/5 transition whitespace-nowrap">Sign out</button>
   </form>
 </div>
 {% endblock %}
@@ -28,5 +36,51 @@
       {% endfor %}
     </div>
   {% endif %}
-  {% block app %}{% endblock %}
+
+  {# Clears the fixed tab bar so the last row of content is never covered. #}
+  <div class="pb-24 sm:pb-0">
+    {% block app %}{% endblock %}
+  </div>
+
+  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 flex bg-white/95 backdrop-blur border-t border-black/10"
+       aria-label="Sections">
+    {% if user.creator %}
+      <a href="{% url 'creator_deals' %}" {% if nav == 'deals' %}aria-current="page"{% endif %}
+         class="flex-1 flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold {% if nav == 'deals' %}text-ink{% else %}text-ink/45{% endif %}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12h5l1.5 3h5L16 12h5"/><path d="M4.5 6h15l1.5 6v6H3v-6z"/>
+        </svg>
+        Deals
+      </a>
+      <a href="{% url 'creator_earnings' %}" {% if nav == 'earnings' %}aria-current="page"{% endif %}
+         class="flex-1 flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold {% if nav == 'earnings' %}text-ink{% else %}text-ink/45{% endif %}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M16 12h2"/>
+        </svg>
+        Earnings
+      </a>
+    {% else %}
+      <a href="{% url 'discover' %}" {% if nav == 'discover' %}aria-current="page"{% endif %}
+         class="flex-1 flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold {% if nav == 'discover' %}text-ink{% else %}text-ink/45{% endif %}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/>
+        </svg>
+        Discover
+      </a>
+      <a href="{% url 'campaigns' %}" {% if nav == 'campaigns' %}aria-current="page"{% endif %}
+         class="flex-1 flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold {% if nav == 'campaigns' %}text-ink{% else %}text-ink/45{% endif %}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h10"/>
+        </svg>
+        Campaigns
+      </a>
+      <a href="{% url 'analytics' %}" {% if nav == 'analytics' %}aria-current="page"{% endif %}
+         class="flex-1 flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold {% if nav == 'analytics' %}text-ink{% else %}text-ink/45{% endif %}">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M5 19V11M12 19V5M19 19v-6"/>
+        </svg>
+        Analytics
+      </a>
+    {% endif %}
+  </nav>
 {% endblock %}
