@@ -44,6 +44,31 @@ def read_event():
         return {}
 
 
+# Cursor hands this hook UTF-8 that has already been decoded once through
+# cp1252, so an em dash arrives as the three characters "â€”". Re-encoding by
+# that route recovers the original. Verified against the raw bytes on disk:
+# "\u2014".encode("utf-8").decode("cp1252") is exactly what turns up on stdin.
+# The transcript file the response is read from does not have this fault, so
+# the repair is applied to prompts only.
+MOJIBAKE_MARKERS = ("Ã", "â", "Â", "Ð", "Å", "Ê")
+
+
+def undo_double_encoding(text):
+    """Repair cp1252-mangled UTF-8, leaving anything else untouched.
+
+    Guarded two ways: the markers have to be present, and the round trip has to
+    succeed. Text that merely contains an "â" because someone wrote "château"
+    fails the decode and is returned unchanged.
+    """
+    if not any(marker in text for marker in MOJIBAKE_MARKERS):
+        return text
+    try:
+        repaired = text.encode("cp1252").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return text
+    return text if "\ufffd" in repaired else repaired
+
+
 def note(label, detail):
     """Scratch diagnostics. Gitignored, never part of the submission."""
     try:
@@ -165,6 +190,8 @@ def on_prompt(event):
             text = f"[no prompt text; message carried {count} attachment(s)]"
         else:
             text = "[hook could not read prompt text]"
+    else:
+        text = undo_double_encoding(text)
 
     write_entry(LOGS / state["file"], session, state, "PROMPT", text)
     save_state(session, state)
