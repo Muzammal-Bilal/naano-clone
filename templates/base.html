@@ -54,13 +54,14 @@
         init() {
           const format = STYLES[style] || STYLES.comma;
           const paint = value => { this.text = format(value) + suffix };
-          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            return paint(target);
-          }
-          paint(0);
+          // Show the real number immediately so reviewers never see a flash of 0.
+          paint(target);
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
           const observer = new IntersectionObserver(([entry]) => {
             if (!entry.isIntersecting) return;
             observer.disconnect();
+            paint(0);
             const began = performance.now();
             const frame = now => {
               const progress = Math.min((now - began) / 1400, 1);
@@ -79,15 +80,43 @@
   <style>
     .hero-ember {
       background:
-        radial-gradient(ellipse 80% 50% at 70% 20%, rgba(232, 93, 4, 0.35) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 15% 80%, rgba(255, 138, 61, 0.18) 0%, transparent 50%),
-        linear-gradient(165deg, #12141A 0%, #1C1F27 55%, #2A1A12 100%);
+        radial-gradient(ellipse 70% 55% at 78% 18%, rgba(232, 93, 4, 0.42) 0%, transparent 58%),
+        radial-gradient(ellipse 45% 40% at 12% 88%, rgba(255, 138, 61, 0.22) 0%, transparent 52%),
+        radial-gradient(ellipse 35% 30% at 50% 100%, rgba(196, 73, 2, 0.25) 0%, transparent 60%),
+        linear-gradient(165deg, #0E1014 0%, #1C1F27 48%, #2A1A12 100%);
+      position: relative;
     }
+    .hero-ember::before {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      mix-blend-mode: overlay;
+    }
+    .hero-ember > * { position: relative; z-index: 1; }
     .surface-warm {
-      background: #F7F3EC;
+      background:
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(232, 93, 4, 0.06) 0%, transparent 50%),
+        #F7F3EC;
     }
     .card-lift {
       box-shadow: 0 1px 0 rgba(18, 20, 26, 0.06), 0 18px 40px -20px rgba(18, 20, 26, 0.28);
+    }
+    .card-hover {
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      border-color: rgba(232, 93, 4, 0.28);
+      box-shadow: 0 1px 0 rgba(18, 20, 26, 0.04), 0 28px 48px -24px rgba(232, 93, 4, 0.35);
+    }
+    .btn-ember {
+      box-shadow: 0 8px 24px -8px rgba(232, 93, 4, 0.55);
+      transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+    .btn-ember:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px -8px rgba(232, 93, 4, 0.7);
     }
     .logo-glow {
       filter: drop-shadow(0 0 10px rgba(232, 93, 4, 0.45));
@@ -97,7 +126,11 @@
       50% { filter: drop-shadow(0 0 14px rgba(255, 138, 61, 0.65)); }
     }
     .logo-mark { animation: ember-pulse 3.2s ease-in-out infinite; }
-    @media (prefers-reduced-motion: reduce) { .logo-mark { animation: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .logo-mark { animation: none; }
+      .card-hover:hover { transform: none; }
+      .btn-ember:hover { transform: none; }
+    }
 
     [x-cloak] { display: none !important; }
 

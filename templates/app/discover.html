@@ -14,9 +14,9 @@
         hx-trigger="change, keyup from:#q delay:350ms, submit"
         hx-push-url="true"
         hx-indicator="#loading"
-        class="mt-8 grid lg:grid-cols-[280px_1fr] gap-8 items-start">
+        class="mt-8 grid md:grid-cols-[260px_1fr] gap-8 items-start">
 
-    <aside class="bg-white rounded-xl border border-ink/8 card-lift p-6 space-y-6 lg:sticky lg:top-24">
+    <aside class="bg-white rounded-xl border border-ink/8 card-lift p-6 space-y-6 md:sticky md:top-24">
       <div>
         <label for="q" class="block text-sm font-bold mb-2">Search</label>
         <input type="search" name="q" id="q" value="{{ params.q }}" placeholder="Name, headline, bio"

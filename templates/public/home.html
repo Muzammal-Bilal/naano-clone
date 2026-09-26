@@ -3,7 +3,7 @@
 {% block content %}
 
 <section class="hero-ember relative overflow-hidden">
-  <div class="mx-auto max-w-7xl px-5 pt-20 pb-28 md:pt-28 md:pb-36">
+  <div class="mx-auto max-w-7xl px-5 pt-20 pb-16 md:pt-28 md:pb-20">
     <p class="font-display text-ember-soft text-lg md:text-xl font-semibold tracking-wide">
       Campfire
     </p>
@@ -16,7 +16,7 @@
     </p>
     <div class="mt-10 flex flex-col sm:flex-row items-start gap-4">
       <a href="{% url 'signup' %}"
-         class="inline-flex items-center gap-2 bg-ember text-white rounded-lg px-8 h-13 py-3.5 font-bold text-lg hover:bg-ember-soft transition">
+         class="btn-ember inline-flex items-center gap-2 bg-ember text-white rounded-lg px-8 h-13 py-3.5 font-bold text-lg hover:bg-ember-soft">
         Launch a campaign
         <span aria-hidden="true">&rarr;</span>
       </a>
@@ -24,6 +24,26 @@
          class="inline-flex items-center gap-2 text-paper font-semibold text-lg border-b border-paper/30 hover:border-paper pb-0.5 transition">
         See how it works
       </a>
+    </div>
+
+    {# Atmosphere strip — product stages as a visual plane, not detached cards #}
+    <div class="mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-paper/10 rounded-xl overflow-hidden border border-paper/10">
+      <div class="bg-charcoal/80 px-5 py-5">
+        <p class="text-[10px] font-bold tracking-widest text-ember-soft">01 DISCOVER</p>
+        <p class="mt-2 text-paper font-semibold text-sm">Fit-ranked creators</p>
+      </div>
+      <div class="bg-charcoal/80 px-5 py-5">
+        <p class="text-[10px] font-bold tracking-widest text-ember-soft">02 BRIEF</p>
+        <p class="mt-2 text-paper font-semibold text-sm">Auto campaign brief</p>
+      </div>
+      <div class="bg-charcoal/80 px-5 py-5">
+        <p class="text-[10px] font-bold tracking-widest text-ember-soft">03 BOOK</p>
+        <p class="mt-2 text-paper font-semibold text-sm">Invite → live pipeline</p>
+      </div>
+      <div class="bg-charcoal/80 px-5 py-5">
+        <p class="text-[10px] font-bold tracking-widest text-ember-soft">04 MEASURE</p>
+        <p class="mt-2 text-paper font-semibold text-sm">Attributed pipeline</p>
+      </div>
     </div>
   </div>
 </section>
@@ -349,7 +369,7 @@
       Sign up free. Demo accounts are on the login page if you just want a look.
     </p>
     <a href="{% url 'signup' %}"
-       class="mt-8 inline-flex items-center gap-2 bg-ember text-white rounded-lg px-8 h-13 py-3.5 font-bold text-lg hover:bg-ember-soft transition">
+         class="btn-ember mt-8 inline-flex items-center gap-2 bg-ember text-white rounded-lg px-8 h-13 py-3.5 font-bold text-lg hover:bg-ember-soft">
       Get started
       <span aria-hidden="true">&rarr;</span>
     </a>
