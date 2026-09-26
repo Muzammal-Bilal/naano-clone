@@ -1,53 +1,64 @@
 # Campfire
 
-A B2B LinkedIn creator marketplace for the 8x assignment — original product UI
-and branding, backed by a real Django database. Inspired by the *problem space*
-of creator marketplaces; not a visual clone of any existing site.
+A B2B LinkedIn creator marketplace for the 8x assignment — **original product UI
+and branding**, backed by a real Django database. Built for the rework brief:
+own design choices, same marketplace idea, live data (not mock responses).
 
 **Live:** https://muzammalbilal.pythonanywhere.com  
-**Demo accounts:** `brand / demo1234` and `creator / demo1234` — both are also
-printed on the login page, so no signup is needed to see either side.
+**Repo:** https://github.com/Muzammal-Bilal/naano-clone  
+**Demo accounts:** `brand / demo1234` and `creator / demo1234` — also printed on
+the login page (one click fills the form).
 
 ---
 
-## What I built, and in what order
-
-A two-sided marketplace needs a spine that makes it a business rather than a directory:
+## Product spine
 
 > **Discover creators → build a brief → book them → track what came back.**
 
-1. **Landing page** — Campfire-branded public front door (Fraunces + Sora, ember palette, custom SVG logo).
-2. **Auth with two roles** — signup creates either a Brand or a Creator.
-3. **Creator marketplace** — search, topic/country/price/audience filters, a fit score, and a detail page. Filters swap via HTMX.
-4. **Campaign brief builder** — objective and product description in, structured brief out.
-5. **Booking and pipeline** — invite a creator at their price, then move the booking through Invited → Accepted → Draft ready → Scheduled → Live → Completed.
-6. **Brand analytics** — impressions, clicks, CTR, leads and attributed pipeline from the `PostMetric` table.
-7. **Creator side** — deals inbox, accept/decline, draft submission, earnings ledger.
+| # | Surface | What it does |
+| --- | --- | --- |
+| 1 | Landing | Campfire brand (Fraunces + Sora, ember palette, SVG flame logo), hero sparks + scroll reveals |
+| 2 | Auth | Signup as Brand or Creator; demo logins for both sides |
+| 3 | Discover | Search + topic/country/price/followers filters, fit score; HTMX swaps (no full reload) |
+| 4 | Campaigns | Brief builder → invite creators → pipeline Invited → … → Completed |
+| 5 | Analytics | Impressions, clicks, CTR, leads, pipeline from `PostMetric` (Chart.js) |
+| 6 | Creator | Deals inbox, accept/decline, draft submit, earnings ledger |
 
-## Backend (real database, not mocks)
+Homepage marketing stats are **aggregated from the database** (creator count,
+metrics sums), not inflated copy.
 
-Django ORM over SQLite locally and Postgres when `DATABASE_URL` is set. App pages
-query and write real rows: creators, campaigns, bookings, metrics, transactions.
-Marketing stats on the homepage are aggregated from the same tables (not inflated
-fiction). There is no separate JSON API layer — views render HTML over the ORM
-(plus HTMX HTML partials for discover). That is a deliberate choice for surface
-area in a short build; the data path is still live.
+## Design (own UI, not a site clone)
 
-`python manage.py test core` runs 22 tests covering access control, ownership,
-and the booking lifecycle.
+- Brand name **Campfire**, custom SVG logo (`templates/partials/logo.html`)
+- Palette: ink `#12141A`, paper `#F7F3EC`, ember `#E85D04`, charcoal `#1C1F27`
+- Motion: hero ember sparks, scroll-in reveals (Alpine), smoother Discover HTMX
+  swaps; respects `prefers-reduced-motion`
+- No Naano visual language (no sky cloudscape / Plus Jakarta / lookalike chrome)
+
+## Backend (real database)
+
+Django ORM → SQLite locally, Postgres when `DATABASE_URL` is set. App pages
+read/write real rows: creators, campaigns, bookings, metrics, transactions.
+Server-rendered HTML + HTMX HTML partials (no fake JSON stubs). Wallet/metrics
+are demo-grade ledgers/seed curves by design — the tables and CRUD are real.
+
+```bash
+python manage.py test core   # 22 tests: access control, ownership, booking lifecycle
+```
 
 ## Architecture
 
 ```
 config/     settings, urls, wsgi
 core/
-  models.py       domain: Creator, Brand, Campaign, Booking, PostMetric, Transaction
-  services.py     fit scoring and brief generation
-  forms.py        signup and campaign creation
+  models.py       Creator, Brand, Campaign, Booking, PostMetric, Transaction
+  services.py     fit scoring, brief generation
+  forms.py        signup, campaign create
   views/          public.py, brand.py, creator.py
   tests.py
   management/commands/seed_demo.py
-templates/  base, public/, app/, auth/, partials/ (incl. Campfire logo)
+templates/  base, public/, app/, auth/, partials/ (logo, cards, HTMX results)
+.cursor/    hooks for agent capture → .agent-logs/
 ```
 
 ## Running locally
@@ -60,11 +71,36 @@ python -m venv .venv
 .venv/Scripts/python manage.py runserver
 ```
 
-`seed_demo` builds ~80 creators, 4 campaigns, bookings and 30 days of daily
-metrics. It is deterministic. On deploy it runs with `--if-empty` so redeploying
-never wipes a reviewer account.
+Open http://127.0.0.1:8000/
+
+`seed_demo` builds ~80 creators, 4 campaigns, bookings, and 30 days of metrics
+(deterministic). On deploy use `--if-empty` so reviewer signups are not wiped.
+
+### 60-second demo path
+
+1. Open the live site — Campfire landing, sparks, marketplace strip  
+2. Sign in as `brand` / `demo1234` → Discover → filter a topic (HTMX)  
+3. Campaigns → open a campaign → pipeline  
+4. Analytics → chart from DB metrics  
+5. Sign out → `creator` / `demo1234` → Deals / Earnings  
+
+## Deploy (PythonAnywhere)
+
+```bash
+cd ~/naano-clone
+git pull origin main
+source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate --noinput
+python manage.py seed_demo --if-empty
+python manage.py collectstatic --noinput
+```
+
+Then **Web → Reload**.
 
 ## Agent capture
 
-Prompts and final responses are captured automatically into [`.agent-logs/`](.agent-logs)
-by a Cursor hook. See [CAPTURE-TEST.md](CAPTURE-TEST.md).
+Prompts and final responses are written automatically into [`.agent-logs/`](.agent-logs)
+by a Cursor hook (`project: campfire`). See [CAPTURE-TEST.md](CAPTURE-TEST.md)
+for the mechanism and canary verification. Logs from the Campfire redesign
+session ship with the repo.

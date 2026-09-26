@@ -3,14 +3,18 @@
 Evidence that agent capture is installed at the project level and fires on its
 own, in every session, without anyone remembering to run it.
 
+**Project tag in logs:** `campfire` (set in `.cursor/hooks/capture.py` as
+`PROJECT`). Older canary files below still say `naano-rebuild` from before the
+rebrand; the hook itself now writes `campfire`.
+
 ## Setup
 
 | | |
 | --- | --- |
-| Tool | Cursor 3.20.10 |
-| Models seen | `claude-opus-5-thinking-high` (main session), `auto-smart` (second session) |
+| Tool | Cursor |
+| Models seen | `claude-opus-5-thinking-high`, `auto-smart` |
 | Mechanism | Cursor lifecycle hooks |
-| Config file changed | `.cursor/hooks.json` |
+| Config file | `.cursor/hooks.json` |
 | Hook script | `.cursor/hooks/capture.py` |
 | Output | `.agent-logs/YYYY-MM-DD_HH-MM-SS_<session-id>.md`, one file per session |
 
@@ -45,7 +49,7 @@ below is there to prove.
 timestamp: 2026-09-12T22:18:50.960Z
 model: claude-opus-5-thinking-high
 
-CAPTURE TEST â€” 8x assignment, Muzammal Bilal
+CAPTURE TEST — 8x assignment, Muzammal Bilal
 ```
 
 ```
@@ -69,7 +73,7 @@ Different session id, different file, different model. Nothing was run by hand.
 timestamp: 2026-09-12T22:19:40.721Z
 model: auto-smart
 
-CAPTURE TEST â€” 8x assignment, Muzammal Bilal
+CAPTURE TEST — 8x assignment, Muzammal Bilal
 ```
 
 ```
@@ -82,10 +86,32 @@ Canary received.
 `CAPTURE TEST — 8x assignment, Muzammal Bilal` is logged for this session. The Cursor hook should write the prompt and this reply into `.agent-logs/` when the turn ends.
 ```
 
+## Campfire rework session (live evidence after rebrand)
+
+The 8x rework (own UI → **Campfire**, keep real Django backend) was done in a
+later session. The hook kept writing without any manual capture step.
+
+**File:** `.agent-logs/2026-09-26_10-24-37_5150b6f4-22ab-458d-9e6a-29129016c1a2.md`
+
+```
+---
+session_id: 5150b6f4-22ab-458d-9e6a-29129016c1a2
+project: campfire
+author: Muzammal-Bilal
+tool: cursor
+---
+
+Session: `5150b6f4` | Project: `campfire` | Author: `Muzammal-Bilal`
+```
+
+That log includes the reviewer rework email, the Campfire redesign plan, and the
+follow-up implementation turns (frontend rebuild, animations, verification).
+Open the file for the full prompt/response pairs.
+
 ## The canary caught a bug, and the fix
 
-Both prompts above landed as `CAPTURE TEST â€” 8x assignment`. The em dash is
-wrong. Reading the raw bytes rather than trusting the terminal:
+Both early canary prompts landed as `CAPTURE TEST â€” 8x assignment`. The em dash
+is wrong. Reading the raw bytes rather than trusting the terminal:
 
 ```
 on disk:                  b'\xc3\xa2\xe2\x82\xac\xe2\x80\x9d'
@@ -158,7 +184,9 @@ count.
 ls .agent-logs/
 grep -c "LOG_ENTRY type=PROMPT" .agent-logs/*.md
 grep -n "CAPTURE TEST" .agent-logs/*.md
+grep -n "project: campfire" .agent-logs/*.md
 ```
 
-Two files, two different session ids, the canary present in both. Nothing in
-`.agent-logs/` is gitignored; it ships with the repo.
+You should see: the two September-12 canary files, plus the Campfire rework
+session (`5150b6f4`) with `project: campfire`. Nothing in `.agent-logs/` is
+gitignored; it ships with the repo.
