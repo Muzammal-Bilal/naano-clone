@@ -3,18 +3,26 @@
 {% block content %}
 
 <section class="hero-ember relative overflow-hidden">
+  <div class="hero-sparks" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
   <div class="mx-auto max-w-7xl px-5 pt-20 pb-16 md:pt-28 md:pb-20">
-    <p class="font-display text-ember-soft text-lg md:text-xl font-semibold tracking-wide">
+    <p class="reveal font-display text-ember-soft text-lg md:text-xl font-semibold tracking-wide"
+       x-data="reveal(0)" :class="shown && 'is-in'">
       Campfire
     </p>
-    <h1 class="mt-4 font-display text-paper text-[clamp(2.75rem,6.5vw,4.75rem)] font-bold leading-[1.05] tracking-tight max-w-3xl">
+    <h1 class="reveal mt-4 font-display text-paper text-[clamp(2.75rem,6.5vw,4.75rem)] font-bold leading-[1.05] tracking-tight max-w-3xl"
+        x-data="reveal(80)" :class="shown && 'is-in'">
       Gather the creators your buyers already trust.
     </h1>
-    <p class="mt-6 max-w-xl text-lg md:text-xl text-paper/65 leading-relaxed">
+    <p class="reveal mt-6 max-w-xl text-lg md:text-xl text-paper/65 leading-relaxed"
+       x-data="reveal(160)" :class="shown && 'is-in'">
       Brief campaigns in minutes, book B2B LinkedIn voices by fit — not vanity metrics —
       and watch pipeline light up from every post.
     </p>
-    <div class="mt-10 flex flex-col sm:flex-row items-start gap-4">
+    <div class="reveal mt-10 flex flex-col sm:flex-row items-start gap-4"
+         x-data="reveal(240)" :class="shown && 'is-in'">
       <a href="{% url 'signup' %}"
          class="btn-ember inline-flex items-center gap-2 bg-ember text-white rounded-lg px-8 h-13 py-3.5 font-bold text-lg hover:bg-ember-soft">
         Launch a campaign
@@ -26,8 +34,8 @@
       </a>
     </div>
 
-    {# Atmosphere strip — product stages as a visual plane, not detached cards #}
-    <div class="mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-paper/10 rounded-xl overflow-hidden border border-paper/10">
+    <div class="reveal mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-paper/10 rounded-xl overflow-hidden border border-paper/10"
+         x-data="reveal(320)" :class="shown && 'is-in'">
       <div class="bg-charcoal/80 px-5 py-5">
         <p class="text-[10px] font-bold tracking-widest text-ember-soft">01 DISCOVER</p>
         <p class="mt-2 text-paper font-semibold text-sm">Fit-ranked creators</p>
@@ -74,7 +82,7 @@
 
 <section class="bg-paper py-16 md:py-20 relative overflow-hidden">
   <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ember/40 to-transparent"></div>
-  <div class="mx-auto max-w-3xl px-5 text-center">
+  <div class="reveal mx-auto max-w-3xl px-5 text-center" x-data="reveal()" :class="shown && 'is-in'">
     <p class="text-[11px] font-bold tracking-widest text-ember mb-6">TRUSTED BY GROWTH TEAMS</p>
     <blockquote class="font-display text-2xl md:text-3xl font-semibold tracking-tight leading-snug text-ink/90">
       &ldquo;{{ testimonial.quote }}&rdquo;
@@ -93,7 +101,7 @@
 
 <section id="creators" class="bg-white py-20 md:py-28 scroll-mt-[72px]">
   <div class="mx-auto max-w-7xl px-5">
-    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <div class="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-6" x-data="reveal()" :class="shown && 'is-in'">
       <div>
         <p class="text-[11px] font-bold tracking-widest text-ember">MARKETPLACE</p>
         <h2 class="mt-3 font-display text-[clamp(2rem,4vw,3rem)] font-bold tracking-tight max-w-2xl">
@@ -109,7 +117,7 @@
       </a>
     </div>
 
-    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="reveal mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" x-data="reveal(100)" :class="shown && 'is-in'">
       {% for creator in creators %}
         <a href="{% url 'login' %}" class="block group">
           {% include "partials/creator_card.html" with creator=creator %}
@@ -134,6 +142,7 @@
 
 <section id="how" class="surface-warm py-20 md:py-28 scroll-mt-[72px]">
   <div class="mx-auto max-w-7xl px-5">
+    <div class="reveal" x-data="reveal()" :class="shown && 'is-in'">
     <p class="text-[11px] font-bold tracking-widest text-ember">FROM BRIEF TO RESULTS</p>
     <h2 class="mt-3 font-display text-[clamp(2rem,4vw,3rem)] font-bold tracking-tight max-w-2xl">
       One place to run the whole campaign.
@@ -141,8 +150,9 @@
     <p class="mt-4 max-w-xl text-lg text-ink/60">
       Discover, brief, book, and attribute — without a dozen tabs and email threads.
     </p>
+    </div>
 
-    <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div class="reveal mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3" x-data="reveal(80)" :class="shown && 'is-in'">
       <div class="bg-white rounded-xl p-7 card-lift card-hover border border-ink/5">
         <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-ember/10 text-sm font-mono font-bold text-ember">01</span>
         <div class="mt-5 space-y-2">
@@ -300,7 +310,7 @@
 </section>
 
 <section class="bg-charcoal text-paper py-20 md:py-28">
-  <div class="mx-auto max-w-7xl px-5">
+  <div class="reveal mx-auto max-w-7xl px-5" x-data="reveal()" :class="shown && 'is-in'">
     <h2 class="font-display text-[clamp(2rem,4vw,3rem)] font-bold tracking-tight text-center">
       Numbers from the live database.
     </h2>
@@ -321,7 +331,7 @@
 </section>
 
 <section id="pricing" class="bg-paper py-20 md:py-28 scroll-mt-[72px]">
-  <div class="mx-auto max-w-7xl px-5">
+  <div class="reveal mx-auto max-w-7xl px-5" x-data="reveal()" :class="shown && 'is-in'">
     <h2 class="font-display text-[clamp(2rem,4vw,3rem)] font-bold tracking-tight text-center">
       Simple pricing.
     </h2>

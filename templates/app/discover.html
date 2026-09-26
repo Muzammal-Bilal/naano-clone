@@ -17,7 +17,7 @@
   <form id="filters"
         hx-get="{% url 'discover' %}"
         hx-target="#results"
-        hx-swap="innerHTML swap:80ms"
+        hx-swap="innerHTML swap:120ms settle:200ms"
         hx-trigger="change, keyup from:#q delay:350ms, submit"
         hx-push-url="true"
         hx-indicator="#loading"

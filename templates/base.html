@@ -77,6 +77,23 @@
           observer.observe(this.$el);
         },
       }));
+
+      Alpine.data('reveal', (delay = 0) => ({
+        shown: false,
+        delay,
+        init() {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            this.shown = true;
+            return;
+          }
+          const observer = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            observer.disconnect();
+            window.setTimeout(() => { this.shown = true; }, this.delay);
+          }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+          observer.observe(this.$el);
+        },
+      }));
     });
   </script>
 
@@ -97,6 +114,51 @@
       mix-blend-mode: overlay;
     }
     .hero-ember > * { position: relative; z-index: 1; }
+    .hero-ember::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse 50% 40% at 75% 25%, rgba(255, 138, 61, 0.2) 0%, transparent 70%);
+      animation: hero-glow 5s ease-in-out infinite alternate;
+    }
+    @keyframes hero-glow {
+      from { opacity: 0.55; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.06); }
+    }
+
+    .hero-sparks {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
+    }
+    .hero-sparks span {
+      position: absolute; bottom: 8%; width: 4px; height: 4px; border-radius: 999px;
+      background: #FFB703; box-shadow: 0 0 8px 2px rgba(232, 93, 4, 0.65);
+      opacity: 0; animation: spark-rise 4.5s ease-in infinite;
+    }
+    .hero-sparks span:nth-child(1) { left: 12%; animation-delay: 0s; }
+    .hero-sparks span:nth-child(2) { left: 28%; width: 3px; height: 3px; animation-delay: 0.8s; animation-duration: 5.2s; }
+    .hero-sparks span:nth-child(3) { left: 48%; animation-delay: 1.4s; }
+    .hero-sparks span:nth-child(4) { left: 62%; width: 5px; height: 5px; animation-delay: 0.4s; animation-duration: 4s; }
+    .hero-sparks span:nth-child(5) { left: 78%; animation-delay: 2s; }
+    .hero-sparks span:nth-child(6) { left: 88%; width: 3px; height: 3px; animation-delay: 1.1s; animation-duration: 5.5s; }
+    .hero-sparks span:nth-child(7) { left: 38%; animation-delay: 2.6s; }
+    .hero-sparks span:nth-child(8) { left: 70%; animation-delay: 3.2s; animation-duration: 4.8s; }
+    @keyframes spark-rise {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      12% { opacity: 0.9; }
+      70% { opacity: 0.45; }
+      100% { transform: translateY(-72vh) scale(0.2); opacity: 0; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.is-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .surface-warm {
       background:
         radial-gradient(ellipse 60% 40% at 100% 0%, rgba(232, 93, 4, 0.06) 0%, transparent 50%),
@@ -133,6 +195,8 @@
       .logo-mark { animation: none; }
       .card-hover:hover { transform: none; }
       .btn-ember:hover { transform: none; }
+      .hero-ember::after, .hero-sparks span { animation: none !important; }
+      .reveal { opacity: 1; transform: none; transition: none; }
     }
 
     [x-cloak] { display: none !important; }
@@ -144,7 +208,17 @@
     .marquee:hover .marquee-track { animation-play-state: paused; }
     @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
 
-    .htmx-swapping { opacity: 0.45; transition: opacity 120ms ease; }
+    .htmx-swapping { opacity: 0.3; transition: opacity 150ms ease; }
+    #results { transition: opacity 180ms ease; }
+    #results.htmx-added { animation: results-in 280ms ease; }
+    @keyframes results-in {
+      from { opacity: 0.35; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #results.htmx-added { animation: none; }
+      .htmx-swapping { opacity: 1; transition: none; }
+    }
 
     /* Thin progress bar while HTMX requests run */
     #htmx-progress {
