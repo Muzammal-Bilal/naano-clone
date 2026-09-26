@@ -4,13 +4,20 @@
 {% block app %}
 <div class="mx-auto max-w-7xl px-5 py-10">
 
-  <h1 class="font-display text-4xl font-bold tracking-tight">Discover creators.</h1>
-  <p class="mt-2 text-ink/55">Ranked by fit with your audience, not by follower count.</p>
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <h1 class="font-display text-4xl font-bold tracking-tight">Discover creators.</h1>
+      <p class="mt-2 text-ink/55">Ranked by fit with your audience, not by follower count.</p>
+    </div>
+    <a href="{% url 'campaigns' %}" class="text-sm font-semibold text-ember hover:text-ember-deep transition">
+      Your campaigns &rarr;
+    </a>
+  </div>
 
   <form id="filters"
         hx-get="{% url 'discover' %}"
         hx-target="#results"
-        hx-swap="innerHTML"
+        hx-swap="innerHTML swap:80ms"
         hx-trigger="change, keyup from:#q delay:350ms, submit"
         hx-push-url="true"
         hx-indicator="#loading"
@@ -27,7 +34,7 @@
         <span class="block text-sm font-bold mb-2">Topics</span>
         <div class="space-y-1.5 max-h-52 overflow-y-auto pr-1">
           {% for topic in topics %}
-            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer hover:text-ember transition">
               <input type="checkbox" name="topic" value="{{ topic.id }}"
                      {% if topic.id in selected_topics %}checked{% endif %}
                      class="rounded border-ink/20 text-ember focus:ring-ember/40">
@@ -41,7 +48,7 @@
         <span class="block text-sm font-bold mb-2">Country</span>
         <div class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
           {% for code, name in countries %}
-            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer hover:text-ember transition">
               <input type="checkbox" name="country" value="{{ code }}"
                      {% if code in selected_countries %}checked{% endif %}
                      class="rounded border-ink/20 text-ember focus:ring-ember/40">
@@ -69,8 +76,38 @@
     </aside>
 
     <div>
+      {% if selected_topics or selected_countries or params.q or params.max_price or params.min_followers %}
+        <div class="flex flex-wrap gap-2 mb-4">
+          {% if params.q %}
+            <span class="text-xs font-semibold bg-ember/10 text-ember-deep rounded-lg px-2.5 py-1">Search: {{ params.q }}</span>
+          {% endif %}
+          {% for topic in topics %}
+            {% if topic.id in selected_topics %}
+              <span class="text-xs font-semibold bg-ember/10 text-ember-deep rounded-lg px-2.5 py-1">{{ topic.name }}</span>
+            {% endif %}
+          {% endfor %}
+          {% for code, name in countries %}
+            {% if code in selected_countries %}
+              <span class="text-xs font-semibold bg-ember/10 text-ember-deep rounded-lg px-2.5 py-1">{{ name }}</span>
+            {% endif %}
+          {% endfor %}
+          {% if params.max_price %}
+            <span class="text-xs font-semibold bg-ember/10 text-ember-deep rounded-lg px-2.5 py-1">≤ €{{ params.max_price }}</span>
+          {% endif %}
+          {% if params.min_followers %}
+            <span class="text-xs font-semibold bg-ember/10 text-ember-deep rounded-lg px-2.5 py-1">≥ {{ params.min_followers }} followers</span>
+          {% endif %}
+        </div>
+      {% endif %}
+
       <div class="flex items-center justify-between gap-4 mb-5">
-        <span id="loading" class="htmx-indicator text-sm text-ember">Filtering&hellip;</span>
+        <span id="loading" class="htmx-indicator inline-flex items-center gap-2 text-sm font-semibold text-ember">
+          <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" opacity="0.25"/>
+            <path d="M21 12a9 9 0 0 1-9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Filtering&hellip;
+        </span>
         <label class="flex items-center gap-2 text-sm ml-auto">
           <span class="font-semibold">Sort</span>
           <select name="sort" class="rounded-lg border border-ink/15 px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ember/35">
@@ -89,7 +126,7 @@
 </div>
 
 <style>
-  .htmx-indicator { opacity: 0; }
+  .htmx-indicator { opacity: 0; transition: opacity 120ms ease; }
   .htmx-request .htmx-indicator { opacity: 1; }
 </style>
 {% endblock %}

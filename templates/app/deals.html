@@ -3,11 +3,20 @@
 
 {% block app %}
 <div class="mx-auto max-w-5xl px-5 py-10">
-  <h1 class="text-4xl font-bold tracking-tight">Your deals.</h1>
-  <p class="mt-2 text-ink/55">Accept the ones that fit your audience. Skip the rest, no penalty.</p>
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <h1 class="font-display text-4xl font-bold tracking-tight">Your deals.</h1>
+      <p class="mt-2 text-ink/55">Accept the ones that fit your audience. Skip the rest, no penalty.</p>
+    </div>
+    {% if invited %}
+      <span class="inline-flex items-center gap-2 rounded-lg bg-ember/10 text-ember-deep px-3 py-2 text-sm font-bold">
+        {{ invited|length }} need{{ invited|length|pluralize:"s," }} your answer
+      </span>
+    {% endif %}
+  </div>
 
   {% if invited %}
-    <h2 class="mt-10 text-sm font-bold tracking-widest text-ink/40">NEEDS YOUR ANSWER</h2>
+    <h2 class="mt-10 text-sm font-bold tracking-widest text-ember">NEEDS YOUR ANSWER</h2>
     <div class="mt-4 space-y-3">
       {% for booking in invited %}{% include "partials/deal_row.html" %}{% endfor %}
     </div>
@@ -18,7 +27,7 @@
     {% for booking in active %}
       {% include "partials/deal_row.html" %}
     {% empty %}
-      <div class="bg-white rounded-xl border border-black/5 py-14 text-center">
+      <div class="bg-white rounded-xl border border-ink/8 py-14 text-center card-lift">
         <p class="font-bold">Nothing in progress.</p>
         <p class="mt-1.5 text-sm text-ink/50">Accepted deals will show up here.</p>
       </div>
@@ -27,7 +36,7 @@
 
   {% if closed %}
     <h2 class="mt-10 text-sm font-bold tracking-widest text-ink/40">CLOSED</h2>
-    <div class="mt-4 space-y-3 opacity-60">
+    <div class="mt-4 space-y-3 opacity-70">
       {% for booking in closed %}{% include "partials/deal_row.html" %}{% endfor %}
     </div>
   {% endif %}

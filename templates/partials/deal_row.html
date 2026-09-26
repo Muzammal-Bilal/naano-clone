@@ -1,6 +1,6 @@
 ﻿{% comment %}One booking, as a row in the creator's deal list.{% endcomment %}
 <a href="{% url 'creator_deal_detail' booking.pk %}"
-   class="flex items-center gap-5 bg-white rounded-xl border border-black/5 card-lift px-6 py-5 hover:border-ink/15 transition">
+   class="flex items-center gap-5 bg-white rounded-xl border border-ink/8 card-lift card-hover px-6 py-5">
 
   <div class="flex-1 min-w-0">
     <p class="font-bold tracking-tight truncate">{{ booking.campaign.name }}</p>
@@ -12,10 +12,10 @@
   <span class="shrink-0 text-xs font-bold rounded-lg px-3 py-1.5
     {% if booking.status == 'invited' %}bg-amber-50 text-amber-700
     {% elif booking.status == 'live' %}bg-emerald-50 text-emerald-700
-    {% elif booking.status == 'declined' %}bg-black/5 text-ink/50
+    {% elif booking.status == 'declined' %}bg-ink/5 text-ink/50
     {% else %}bg-paper text-ink/70{% endif %}">
     {{ booking.get_status_display }}
   </span>
 
-  <p class="shrink-0 font-bold w-20 text-right">&euro;{{ booking.price|floatformat:0 }}</p>
+  <p class="shrink-0 font-bold w-20 text-right text-ember">&euro;{{ booking.price|floatformat:0 }}</p>
 </a>
