@@ -1,0 +1,15 @@
+{# Campfire mark: flame over crossed logs. Pass size (px) and optional light=1 for dark backgrounds. #}
+<svg width="{{ size|default:32 }}" height="{{ size|default:32 }}" viewBox="0 0 40 40" fill="none" aria-hidden="true"
+     class="logo-mark shrink-0 {% if light %}logo-glow{% endif %}">
+  {# Outer flame #}
+  <path d="M20 4c2.8 4.2 7.2 7.4 7.2 13.2 0 5.2-3.2 9-7.2 9s-7.2-3.8-7.2-9C12.8 11.4 17.2 8.2 20 4Z"
+        fill="{% if light %}#FF8A3D{% else %}#E85D04{% endif %}"/>
+  {# Inner flame #}
+  <path d="M20 11c1.4 2.2 3.6 3.8 3.6 6.8 0 2.6-1.5 4.4-3.6 4.4s-3.6-1.8-3.6-4.4c0-3 2.2-4.6 3.6-6.8Z"
+        fill="{% if light %}#FFE08A{% else %}#FFB703{% endif %}"/>
+  {# Logs #}
+  <rect x="8" y="30" width="24" height="4.5" rx="2.2" transform="rotate(-12 20 32.25)"
+        fill="{% if light %}#8B5E3C{% else %}#5C4033{% endif %}"/>
+  <rect x="8" y="30" width="24" height="4.5" rx="2.2" transform="rotate(12 20 32.25)"
+        fill="{% if light %}#A67C52{% else %}#7A5230{% endif %}"/>
+</svg>

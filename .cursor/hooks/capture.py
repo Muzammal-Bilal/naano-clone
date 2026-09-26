@@ -26,7 +26,7 @@ LOGS = ROOT / ".agent-logs"
 STATE = ROOT / ".cursor" / "hooks" / ".state"
 
 AUTHOR = "Muzammal-Bilal"
-PROJECT = "naano-rebuild"
+PROJECT = "campfire"
 TOOL = "cursor"
 
 

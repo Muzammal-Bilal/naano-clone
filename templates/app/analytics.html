@@ -1,52 +1,52 @@
 {% extends "app/base_app.html" %}
 {% load humanize %}
-{% block title %}Analytics | Naano{% endblock %}
+{% block title %}Analytics | Campfire{% endblock %}
 
 {% block app %}
 <div class="mx-auto max-w-6xl px-5 py-10">
 
-  <h1 class="text-4xl font-extrabold tracking-[-0.03em]">Analytics.</h1>
+  <h1 class="font-display text-4xl font-bold tracking-tight">Analytics.</h1>
   <p class="mt-2 text-ink/55">Every post carries a tracked link, so spend maps to a creator.</p>
 
   <div class="mt-8 grid grid-cols-2 lg:grid-cols-5 gap-4">
-    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">IMPRESSIONS</p>
-      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+      <p class="mt-1.5 text-3xl font-bold tabular-nums text-ember"
          x-data="countUp({{ totals.impressions }})" x-text="text">{{ totals.impressions|intcomma }}</p>
     </div>
-    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">CLICKS</p>
-      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+      <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.clicks }})" x-text="text">{{ totals.clicks|intcomma }}</p>
     </div>
-    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">CTR</p>
-      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+      <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.ctr }}, 'rate', '%')" x-text="text">{{ totals.ctr }}%</p>
     </div>
-    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">LEADS</p>
-      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+      <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.leads }})" x-text="text">{{ totals.leads|intcomma }}</p>
     </div>
-    <div class="bg-white rounded-3xl border border-black/5 card-shadow p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">PIPELINE</p>
-      <p class="mt-1.5 text-3xl font-extrabold tabular-nums"
+      <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.pipeline|floatformat:'0' }}, 'euro')"
          x-text="text">&euro;{{ totals.pipeline|floatformat:0|intcomma }}</p>
     </div>
   </div>
 
-  <div class="mt-6 bg-white rounded-3xl border border-black/5 card-shadow p-8">
+  <div class="mt-6 bg-white rounded-xl border border-ink/8 card-lift p-8">
     <h2 class="text-sm font-bold tracking-widest text-ink/40">DAILY PERFORMANCE</h2>
     <div class="mt-5 h-72"><canvas id="performance"></canvas></div>
   </div>
 
   <h2 class="mt-12 text-sm font-bold tracking-widest text-ink/40">BY CAMPAIGN</h2>
-  <div class="mt-4 bg-white rounded-3xl border border-black/5 card-shadow overflow-hidden">
+  <div class="mt-4 bg-white rounded-xl border border-ink/8 card-lift overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
-        <thead class="bg-black/[.02] text-left">
+        <thead class="bg-paper text-left">
           <tr class="text-[10px] font-bold tracking-widest text-ink/40">
             <th class="px-6 py-3.5">CAMPAIGN</th>
             <th class="px-6 py-3.5 text-right">SPEND</th>
@@ -56,17 +56,17 @@
             <th class="px-6 py-3.5 text-right">PIPELINE</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-black/5">
+        <tbody class="divide-y divide-ink/5">
           {% for campaign in campaigns %}
-            <tr class="hover:bg-black/[.015]">
+            <tr class="hover:bg-paper/60">
               <td class="px-6 py-4">
-                <a href="{% url 'campaign_detail' campaign.pk %}" class="font-bold hover:underline">{{ campaign.name }}</a>
+                <a href="{% url 'campaign_detail' campaign.pk %}" class="font-bold hover:text-ember">{{ campaign.name }}</a>
               </td>
               <td class="px-6 py-4 text-right">&euro;{{ campaign.spend|default:0|floatformat:0|intcomma }}</td>
               <td class="px-6 py-4 text-right">{{ campaign.impressions|default:0|intcomma }}</td>
               <td class="px-6 py-4 text-right">{{ campaign.clicks|default:0|intcomma }}</td>
               <td class="px-6 py-4 text-right">{{ campaign.leads|default:0|intcomma }}</td>
-              <td class="px-6 py-4 text-right font-bold">&euro;{{ campaign.pipeline|default:0|floatformat:0|intcomma }}</td>
+              <td class="px-6 py-4 text-right font-bold text-ember">&euro;{{ campaign.pipeline|default:0|floatformat:0|intcomma }}</td>
             </tr>
           {% empty %}
             <tr><td colspan="6" class="px-6 py-14 text-center text-ink/50">No campaign data yet.</td></tr>
@@ -93,8 +93,8 @@
     data: {
       labels: data.labels,
       datasets: [
-        line('Impressions', data.impressions, '#2E90FA', 'y'),
-        line('Clicks', data.clicks, '#0A0D14', 'y1'),
+        line('Impressions', data.impressions, '#E85D04', 'y'),
+        line('Clicks', data.clicks, '#12141A', 'y1'),
         line('Leads', data.leads, '#10B981', 'y1'),
       ],
     },
@@ -104,8 +104,7 @@
       plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6 } } },
       scales: {
         x: { grid: { display: false } },
-        // Impressions dwarf clicks and leads, so those get their own axis.
-        y: { position: 'left', beginAtZero: true, grid: { color: 'rgba(10,13,20,.05)' } },
+        y: { position: 'left', beginAtZero: true, grid: { color: 'rgba(18,20,26,.05)' } },
         y1: { position: 'right', beginAtZero: true, grid: { display: false } },
       },
     },

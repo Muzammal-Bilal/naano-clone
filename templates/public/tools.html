@@ -1,14 +1,14 @@
-{% extends "base.html" %}
-{% block title %}Free campaign calculator | Naano{% endblock %}
+﻿{% extends "base.html" %}
+{% block title %}Free campaign calculator | Campfire{% endblock %}
 
 {% block content %}
-<section class="cloudscape">
+<section class="hero-ember">
   <div class="mx-auto max-w-4xl px-5 pt-16 pb-20 md:pt-24 text-center">
     <p class="text-[11px] font-bold tracking-widest text-ink/40">FREE TOOLS</p>
-    <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)] font-extrabold tracking-[-0.035em]">
+    <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)] font-bold tracking-[-0.035em] text-paper">
       Campaign budget calculator.
     </h1>
-    <p class="mt-6 mx-auto max-w-2xl text-lg text-ink/60">
+    <p class="mt-6 mx-auto max-w-2xl text-lg text-paper/65">
       Work out how many creators a budget buys, and what that is likely to return,
       before you commit a euro.
     </p>
@@ -36,11 +36,11 @@
            count(n) { return Math.round(n).toLocaleString('en-US') }
          }">
 
-      <div class="bg-white rounded-3xl border border-black/[.07] p-8 space-y-7">
+      <div class="bg-white rounded-xl border border-black/[.07] p-8 space-y-7">
         <div>
           <div class="flex items-baseline justify-between">
             <label for="budget" class="font-bold">Campaign budget</label>
-            <span class="text-lg font-extrabold tabular-nums" x-text="money(budget)"></span>
+            <span class="text-lg font-bold tabular-nums" x-text="money(budget)"></span>
           </div>
           <input id="budget" type="range" min="500" max="50000" step="500" x-model.number="budget"
                  class="mt-3 w-full accent-ink">
@@ -49,7 +49,7 @@
         <div>
           <div class="flex items-baseline justify-between">
             <label for="price" class="font-bold">Average price per post</label>
-            <span class="text-lg font-extrabold tabular-nums" x-text="money(price)"></span>
+            <span class="text-lg font-bold tabular-nums" x-text="money(price)"></span>
           </div>
           <input id="price" type="range" min="20" max="800" step="10" x-model.number="price"
                  class="mt-3 w-full accent-ink">
@@ -58,42 +58,42 @@
         <div>
           <div class="flex items-baseline justify-between">
             <label for="views" class="font-bold">Median views per post</label>
-            <span class="text-lg font-extrabold tabular-nums" x-text="count(views)"></span>
+            <span class="text-lg font-bold tabular-nums" x-text="count(views)"></span>
           </div>
           <input id="views" type="range" min="500" max="60000" step="500" x-model.number="views"
                  class="mt-3 w-full accent-ink">
         </div>
       </div>
 
-      <div class="bg-ink text-white rounded-3xl p-8">
+      <div class="bg-ink text-white rounded-xl p-8">
         <p class="text-[10px] font-bold tracking-widest text-white/45">ESTIMATED RETURN</p>
 
         <div class="mt-6">
           <p class="text-sm text-white/60">Creators you can book</p>
-          <p class="text-5xl font-extrabold tracking-tight tabular-nums" x-text="posts"></p>
+          <p class="text-5xl font-bold tracking-tight tabular-nums" x-text="posts"></p>
         </div>
 
         <dl class="mt-8 grid grid-cols-2 gap-y-6">
           <div>
             <dt class="text-sm text-white/60">Impressions</dt>
-            <dd class="text-2xl font-extrabold tabular-nums" x-text="count(impressions)"></dd>
+            <dd class="text-2xl font-bold tabular-nums" x-text="count(impressions)"></dd>
           </div>
           <div>
             <dt class="text-sm text-white/60">Clicks</dt>
-            <dd class="text-2xl font-extrabold tabular-nums" x-text="count(clicks)"></dd>
+            <dd class="text-2xl font-bold tabular-nums" x-text="count(clicks)"></dd>
           </div>
           <div>
             <dt class="text-sm text-white/60">Leads</dt>
-            <dd class="text-2xl font-extrabold tabular-nums" x-text="count(leads)"></dd>
+            <dd class="text-2xl font-bold tabular-nums" x-text="count(leads)"></dd>
           </div>
           <div>
             <dt class="text-sm text-white/60">Cost per lead</dt>
-            <dd class="text-2xl font-extrabold tabular-nums" x-text="money(cpl)"></dd>
+            <dd class="text-2xl font-bold tabular-nums" x-text="money(cpl)"></dd>
           </div>
         </dl>
 
         <a href="{% url 'signup' %}"
-           class="mt-9 h-12 grid place-items-center rounded-full bg-white text-ink font-bold hover:bg-white/90 transition">
+           class="mt-9 h-12 grid place-items-center rounded-lg bg-white text-ink font-bold hover:bg-white/90 transition">
           Find these creators
         </a>
       </div>

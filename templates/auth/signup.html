@@ -1,24 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Sign up | Naano{% endblock %}
+{% block title %}Sign up | Campfire{% endblock %}
 {% block nav %}{% endblock %}
 
 {% block content %}
-<section class="cloudscape min-h-[calc(100vh-72px)] grid place-items-center px-5 py-16">
-  <div class="w-full max-w-md bg-white rounded-3xl p-8 card-shadow"
+<section class="hero-ember min-h-[calc(100vh-72px)] grid place-items-center px-5 py-16">
+  <div class="w-full max-w-md bg-paper rounded-xl p-8 card-lift border border-paper/20"
        x-data="{ role: '{{ form.role.value|default:'brand' }}' }">
 
-    <h1 class="text-3xl font-extrabold tracking-tight">Create your account.</h1>
+    <div class="flex items-center gap-2.5 mb-6">
+      {% include "partials/logo.html" with size=28 %}
+      <span class="font-display text-xl font-bold">Campfire</span>
+    </div>
+
+    <h1 class="font-display text-3xl font-bold tracking-tight">Create your account.</h1>
     <p class="mt-2 text-ink/55">Start free. Pay per post when you're ready.</p>
 
     <form method="post" class="mt-6 space-y-4">
       {% csrf_token %}
 
-      <div class="grid grid-cols-2 gap-2 bg-black/[.04] rounded-2xl p-1.5">
+      <div class="grid grid-cols-2 gap-2 bg-ink/5 rounded-xl p-1.5">
         {% for value, label in form.fields.role.choices %}
           <label class="cursor-pointer">
             <input type="radio" name="role" value="{{ value }}" x-model="role" class="sr-only">
-            <span class="block text-center text-sm font-bold rounded-xl py-2.5 transition"
-                  :class="role === '{{ value }}' ? 'bg-white shadow-sm' : 'text-ink/50'">{{ label }}</span>
+            <span class="block text-center text-sm font-bold rounded-lg py-2.5 transition"
+                  :class="role === '{{ value }}' ? 'bg-white shadow-sm text-ember' : 'text-ink/50'">{{ label }}</span>
           </label>
         {% endfor %}
       </div>
@@ -49,13 +54,13 @@
         {% for error in form.password.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
       </div>
 
-      <button class="w-full rounded-full bg-ink text-white font-bold py-3.5 hover:bg-ink/90 transition">
+      <button class="w-full rounded-lg bg-ember text-white font-bold py-3.5 hover:bg-ember-deep transition">
         Create account
       </button>
     </form>
 
     <p class="mt-5 text-sm text-center text-ink/55">
-      Already have an account? <a href="{% url 'login' %}" class="font-semibold text-ink underline">Sign in</a>
+      Already have an account? <a href="{% url 'login' %}" class="font-semibold text-ember underline">Sign in</a>
     </p>
   </div>
 </section>

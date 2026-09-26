@@ -10,7 +10,7 @@ from decimal import Decimal
 def fit_score(creator, topic_ids, countries, budget=None):
     """Score a creator against a brand's ICP, out of 100.
 
-    Naano surfaces this as "MATCHING 92/100". Weighted so topic overlap
+    Campfire surfaces this as a fit score out of 100. Weighted so topic overlap
     dominates, because audience relevance is the thing that actually predicts
     whether a B2B post converts. Deliberately a pure function of already-loaded
     data: no queries, so it can run over a whole page of creators.

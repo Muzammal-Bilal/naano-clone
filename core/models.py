@@ -1,4 +1,4 @@
-"""Domain model for the naano clone.
+"""Domain model for Campfire.
 
 Two sides of one marketplace. A user is a Creator or a Brand depending on which
 profile row points at them, so there is no separate role column that can drift
@@ -31,7 +31,7 @@ def flag_url(country_code):
 
 
 def compact(number):
-    """12400 -> 12.4K, matching how naano prints audience numbers."""
+    """12400 -> 12.4K compact audience numbers."""
     number = number or 0
     if number < 1000:
         return str(number)

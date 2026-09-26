@@ -1,9 +1,10 @@
-# Naano clone
+# Campfire
 
-A rebuild of [naano.com](https://naano.com), the B2B LinkedIn creator marketplace,
-for the 8x assignment. Not affiliated with Naano.
+A B2B LinkedIn creator marketplace for the 8x assignment — original product UI
+and branding, backed by a real Django database. Inspired by the *problem space*
+of creator marketplaces; not a visual clone of any existing site.
 
-**Live:** https://muzammalbilal.pythonanywhere.com
+**Live:** https://muzammalbilal.pythonanywhere.com  
 **Demo accounts:** `brand / demo1234` and `creator / demo1234` — both are also
 printed on the login page, so no signup is needed to see either side.
 
@@ -11,50 +12,31 @@ printed on the login page, so no signup is needed to see either side.
 
 ## What I built, and in what order
 
-Naano is a two-sided marketplace, and you cannot rebuild both sides properly in a
-day. I picked the spine that makes the product a business rather than a directory:
+A two-sided marketplace needs a spine that makes it a business rather than a directory:
 
 > **Discover creators → build a brief → book them → track what came back.**
 
-1. **Landing page** — the public front door. A reviewer who is not signed in
-   still has to land on something that looks like the product.
+1. **Landing page** — Campfire-branded public front door (Fraunces + Sora, ember palette, custom SVG logo).
 2. **Auth with two roles** — signup creates either a Brand or a Creator.
-3. **Creator marketplace** — search, topic/country/price/audience filters, a fit
-   score, and a detail page. Filters swap via HTMX, so nothing reloads.
-4. **Campaign brief builder** — objective and product description in, structured
-   brief out.
-5. **Booking and pipeline** — invite a creator at their price, then move the
-   booking through Invited → Accepted → Draft ready → Scheduled → Live → Completed.
-6. **Brand analytics** — impressions, clicks, CTR, leads and attributed pipeline,
-   charted daily and broken down per campaign.
+3. **Creator marketplace** — search, topic/country/price/audience filters, a fit score, and a detail page. Filters swap via HTMX.
+4. **Campaign brief builder** — objective and product description in, structured brief out.
+5. **Booking and pipeline** — invite a creator at their price, then move the booking through Invited → Accepted → Draft ready → Scheduled → Live → Completed.
+6. **Brand analytics** — impressions, clicks, CTR, leads and attributed pipeline from the `PostMetric` table.
 7. **Creator side** — deals inbox, accept/decline, draft submission, earnings ledger.
 
-## What I deliberately left out
+## Backend (real database, not mocks)
 
-Each of these is a decision, not an oversight.
+Django ORM over SQLite locally and Postgres when `DATABASE_URL` is set. App pages
+query and write real rows: creators, campaigns, bookings, metrics, transactions.
+Marketing stats on the homepage are aggregated from the same tables (not inflated
+fiction). There is no separate JSON API layer — views render HTML over the ORM
+(plus HTMX HTML partials for discover). That is a deliberate choice for surface
+area in a short build; the data path is still live.
 
-| Cut | Why |
-| --- | --- |
-| LinkedIn OAuth and real publishing | Needs a LinkedIn partner app and review. Days of waiting, zero visible product. |
-| Stripe payments and real payouts | The wallet is a ledger that records movement without moving money. Real payments would consume the whole budget for one screen. |
-| Real UTM click tracking | Attribution infrastructure is a product in itself. Metrics are seeded from a decay curve that matches how a post actually behaves. |
-| Checkout and plan upgrades | Both pricing tiers are presented; neither takes payment. Billing is the same Stripe integration cut above. |
-| Video testimonial player | Naano's landing page runs a 2:40 video. There is no video to play here, and a play button that does nothing is worse than not having one, so the quote is rendered as text. |
-| "View post" links on example posts | These point at live LinkedIn posts. Nothing here would be on the other end, so the metrics are shown without a dead link. |
-| Blog, SEO pages, help centre | The three Resources pages are built. The ~20 SEO landing pages behind their footer are content surface with no engineering signal. |
-| Email and notifications | Needs a provider and deliverability setup to demo honestly. |
-| Drag-and-drop pipeline | A dropdown drives the same state machine with far less code, and works on a phone. |
-
-**What I would build next, in order:** campaign editing after creation, a
-shortlist so creators can be compared before committing budget, real click
-tracking behind the existing `landing_url`, and brand-side draft approval, which
-today is implicit when a booking moves past Draft ready.
+`python manage.py test core` runs 22 tests covering access control, ownership,
+and the booking lifecycle.
 
 ## Architecture
-
-Django rendering HTML on the server, no API layer and no client framework. For a
-one-day build judged on working surface area, a SPA would have spent hours on
-plumbing that buys nothing a reviewer can see.
 
 ```
 config/     settings, urls, wsgi
@@ -63,33 +45,10 @@ core/
   services.py     fit scoring and brief generation
   forms.py        signup and campaign creation
   views/          public.py, brand.py, creator.py
-  tests.py        access control, object ownership, booking lifecycle
+  tests.py
   management/commands/seed_demo.py
-templates/  base, public/, app/, auth/, partials/
+templates/  base, public/, app/, auth/, partials/ (incl. Campfire logo)
 ```
-
-`python manage.py test core` runs 22 tests. They cover the things that fail
-silently rather than visibly: one account reading or writing another's data, and
-the booking lifecycle accepting transitions it should refuse. Layout is not
-tested, because a broken layout is obvious and a broken permission is not. Two
-real bugs came out of writing them — a declined deal could be pulled back into
-the pipeline by posting a draft to it, and an empty draft was accepted as a
-submission.
-
-Decisions worth explaining:
-
-- **No `role` column.** A user is a creator or a brand based on which profile row
-  points at them. A role field can drift out of sync with the data; this cannot.
-- **Fit score is a pure function.** Topic overlap against the brand's ICP is a set
-  operation the ORM cannot express cheaply, so filtering happens in SQL and only
-  the narrowed set is scored in Python.
-- **The brief generator is template-driven, not an LLM call.** No API key, no
-  latency, no spend, and it cannot fail mid-demo. Swapping in a model call means
-  replacing one function in `services.py`.
-- **Seeded metrics decay.** Impressions fall off geometrically after publishing,
-  which is what makes the analytics chart read as real rather than as noise.
-- **Tailwind and Chart.js from CDNs.** There is no Node on the build machine, so
-  a bundler step would have been a dependency to install before writing any code.
 
 ## Running locally
 
@@ -101,13 +60,11 @@ python -m venv .venv
 .venv/Scripts/python manage.py runserver
 ```
 
-`seed_demo` builds 80 creators, 4 campaigns, their bookings and 30 days of daily
-metrics. It is deterministic, so the demo is identical on every machine. On
-deploy it runs with `--if-empty` so redeploying never wipes an account a reviewer
-just created.
+`seed_demo` builds ~80 creators, 4 campaigns, bookings and 30 days of daily
+metrics. It is deterministic. On deploy it runs with `--if-empty` so redeploying
+never wipes a reviewer account.
 
 ## Agent capture
 
 Prompts and final responses are captured automatically into [`.agent-logs/`](.agent-logs)
-by a Cursor hook. See [CAPTURE-TEST.md](CAPTURE-TEST.md) for the mechanism and the
-canary verification.
+by a Cursor hook. See [CAPTURE-TEST.md](CAPTURE-TEST.md).

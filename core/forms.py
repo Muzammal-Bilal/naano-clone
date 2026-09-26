@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from .models import Brand, Campaign, Creator, Topic
 
 FIELD_CLASS = (
-    "w-full rounded-2xl border border-black/10 px-4 py-3 text-[15px] "
-    "focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40 focus:border-[#2E90FA]"
+    "w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] "
+    "focus:outline-none focus:ring-2 focus:ring-ember/35 focus:border-ember"
 )
 
 

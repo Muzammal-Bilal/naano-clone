@@ -1,20 +1,20 @@
-{% extends "app/base_app.html" %}
-{% block title %}{{ creator.display_name }} | Naano{% endblock %}
+﻿{% extends "app/base_app.html" %}
+{% block title %}{{ creator.display_name }} | Campfire{% endblock %}
 {% block app %}
 
-<div class="cloudscape">
+<div class="hero-ember">
   <div class="mx-auto max-w-5xl px-5 pt-10 pb-16">
-    <a href="{% url 'discover' %}" class="text-sm font-semibold text-ink/55 hover:text-ink transition">&larr; Back to discover</a>
+    <a href="{% url 'discover' %}" class="text-sm font-semibold text-paper/60 hover:text-paper transition">&larr; Back to discover</a>
 
-    <div class="mt-6 bg-white rounded-3xl card-shadow overflow-hidden">
+    <div class="mt-6 bg-white rounded-xl card-lift overflow-hidden">
       <div class="p-8 sm:p-10 flex flex-col sm:flex-row gap-7 items-start">
         <img src="{{ creator.avatar_url }}" alt=""
-             class="w-24 h-24 rounded-full ring-4 ring-white shadow-lg bg-sky-100 object-cover shrink-0">
+             class="w-24 h-24 rounded-full ring-4 ring-white shadow-lg bg-paper object-cover shrink-0">
 
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-4 flex-wrap">
             <div>
-              <h1 class="text-3xl font-extrabold tracking-tight">{{ creator.display_name }}</h1>
+              <h1 class="text-3xl font-bold tracking-tight">{{ creator.display_name }}</h1>
               <p class="mt-1 text-ink/55">{{ creator.headline }}</p>
               <p class="mt-2 text-sm font-semibold flex items-center gap-2">
                 <img src="{{ creator.flag_url }}" alt="" width="20" height="15" class="rounded-[2px]">
@@ -22,7 +22,7 @@
               </p>
             </div>
             {% if creator.verified %}
-              <span class="shrink-0 text-xs font-bold bg-emerald-50 text-emerald-700 rounded-full px-3 py-1.5">Vetted</span>
+              <span class="shrink-0 text-xs font-bold bg-emerald-50 text-emerald-700 rounded-lg px-3 py-1.5">Vetted</span>
             {% endif %}
           </div>
 
@@ -30,7 +30,7 @@
 
           <div class="mt-5 flex flex-wrap gap-2">
             {% for topic in creator.topics.all %}
-              <span class="text-xs font-semibold bg-sky-100 rounded-full px-3 py-1.5">{{ topic.name }}</span>
+              <span class="text-xs font-semibold bg-paper rounded-lg px-3 py-1.5">{{ topic.name }}</span>
             {% endfor %}
           </div>
         </div>
@@ -40,8 +40,8 @@
         <div class="flex items-center justify-between text-xs font-bold tracking-widest text-ink/40">
           <span>AUDIENCE FIT</span><span>{{ creator.score }}/100</span>
         </div>
-        <div class="mt-2 h-1.5 rounded-full bg-black/5 overflow-hidden">
-          <div class="h-full rounded-full bg-[#2E90FA]" style="width: {{ creator.score }}%"></div>
+        <div class="mt-2 h-1.5 rounded-lg bg-black/5 overflow-hidden">
+          <div class="h-full rounded-lg bg-[#E85D04]" style="width: {{ creator.score }}%"></div>
         </div>
         <p class="mt-2 text-xs text-ink/45">
           Scored against your ICP topics and target countries, weighted toward audience relevance.
@@ -50,19 +50,19 @@
 
       <div class="grid grid-cols-2 sm:grid-cols-4 border-t border-black/5 divide-x divide-black/5">
         <div class="p-6 text-center">
-          <p class="text-2xl font-extrabold">{{ creator.followers_display }}</p>
+          <p class="text-2xl font-bold">{{ creator.followers_display }}</p>
           <p class="text-[10px] font-bold tracking-widest text-ink/35 mt-1">FOLLOWERS</p>
         </div>
         <div class="p-6 text-center">
-          <p class="text-2xl font-extrabold">{{ creator.views_display }}</p>
+          <p class="text-2xl font-bold">{{ creator.views_display }}</p>
           <p class="text-[10px] font-bold tracking-widest text-ink/35 mt-1">MEDIAN VIEWS</p>
         </div>
         <div class="p-6 text-center">
-          <p class="text-2xl font-extrabold">{{ creator.engagement_rate }}%</p>
+          <p class="text-2xl font-bold">{{ creator.engagement_rate }}%</p>
           <p class="text-[10px] font-bold tracking-widest text-ink/35 mt-1">ENGAGEMENT</p>
         </div>
         <div class="p-6 text-center">
-          <p class="text-2xl font-extrabold">&euro;{{ creator.price_per_post|floatformat:0 }}</p>
+          <p class="text-2xl font-bold">&euro;{{ creator.price_per_post|floatformat:0 }}</p>
           <p class="text-[10px] font-bold tracking-widest text-ink/35 mt-1">PER POST</p>
         </div>
       </div>
@@ -76,20 +76,20 @@
           <form method="post" class="mt-5 flex flex-wrap gap-3">
             {% csrf_token %}
             <select name="campaign" aria-label="Campaign"
-                    class="flex-1 min-w-[200px] rounded-2xl border border-black/10 px-4 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+                    class="flex-1 min-w-[200px] rounded-2xl border border-black/10 px-4 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-ember/35">
               {% for campaign in campaigns %}
                 <option value="{{ campaign.pk }}" {% if campaign.pk in booked_on %}disabled{% endif %}>
                   {{ campaign.name }}{% if campaign.pk in booked_on %} — already booked{% endif %}
                 </option>
               {% endfor %}
             </select>
-            <button class="rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
+            <button class="rounded-lg bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
               Invite at &euro;{{ creator.price_per_post|floatformat:0 }}
             </button>
           </form>
         {% else %}
           <a href="{% url 'campaign_new' %}"
-             class="mt-5 inline-block rounded-full bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
+             class="mt-5 inline-block rounded-lg bg-ink text-white font-bold px-7 py-3.5 hover:bg-ink/90 transition">
             Create a campaign first
           </a>
         {% endif %}

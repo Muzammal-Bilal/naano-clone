@@ -1,17 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Sign in | Naano{% endblock %}
+{% block title %}Sign in | Campfire{% endblock %}
 {% block nav %}{% endblock %}
 
 {% block content %}
-<section class="cloudscape min-h-[calc(100vh-72px)] grid place-items-center px-5 py-16">
+<section class="hero-ember min-h-[calc(100vh-72px)] grid place-items-center px-5 py-16">
   <div class="w-full max-w-md">
 
-    <div class="bg-white rounded-3xl p-8 card-shadow">
-      <h1 class="text-3xl font-extrabold tracking-tight">Welcome back.</h1>
+    <div class="bg-paper rounded-xl p-8 card-lift border border-paper/20">
+      <div class="flex items-center gap-2.5 mb-6">
+        {% include "partials/logo.html" with size=28 %}
+        <span class="font-display text-xl font-bold">Campfire</span>
+      </div>
+      <h1 class="font-display text-3xl font-bold tracking-tight">Welcome back.</h1>
       <p class="mt-2 text-ink/55">Sign in to run your creator campaigns.</p>
 
       {% if form.errors %}
-        <p class="mt-5 text-sm bg-red-50 text-red-700 rounded-2xl px-4 py-3">
+        <p class="mt-5 text-sm bg-red-50 text-red-700 rounded-xl px-4 py-3">
           That username and password did not match an account.
         </p>
       {% endif %}
@@ -21,42 +25,38 @@
         <div>
           <label for="id_username" class="block text-sm font-semibold mb-1.5">Username</label>
           <input type="text" name="username" id="id_username" autofocus required
-                 class="w-full rounded-2xl border border-black/10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+                 class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ember/35 focus:border-ember">
         </div>
         <div>
           <label for="id_password" class="block text-sm font-semibold mb-1.5">Password</label>
           <input type="password" name="password" id="id_password" required
-                 class="w-full rounded-2xl border border-black/10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2E90FA]/40">
+                 class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ember/35 focus:border-ember">
         </div>
-        <button class="w-full rounded-full bg-ink text-white font-bold h-13 py-3.5 hover:bg-ink/90 transition">
+        <button class="w-full rounded-lg bg-ember text-white font-bold h-13 py-3.5 hover:bg-ember-deep transition">
           Sign in
         </button>
       </form>
 
       <p class="mt-5 text-sm text-center text-ink/55">
-        No account? <a href="{% url 'signup' %}" class="font-semibold text-ink underline">Sign up</a>
+        No account? <a href="{% url 'signup' %}" class="font-semibold text-ember underline">Sign up</a>
       </p>
     </div>
 
-    {% comment %}
-    Reviewers need to see both sides of a two-sided marketplace without
-    creating two accounts, so the demo logins are on the door.
-    {% endcomment %}
-    <div class="mt-5 bg-white/70 backdrop-blur rounded-3xl p-6 border border-white">
-      <p class="text-xs font-bold tracking-widest text-ink/40">DEMO ACCOUNTS</p>
+    <div class="mt-5 bg-charcoal/80 backdrop-blur rounded-xl p-6 border border-paper/10">
+      <p class="text-xs font-bold tracking-widest text-paper/40">DEMO ACCOUNTS</p>
       <div class="mt-3 grid sm:grid-cols-2 gap-3">
         <button type="button" onclick="fill('brand')"
-                class="text-left bg-white rounded-2xl px-4 py-3 border border-black/5 hover:border-ink/20 transition">
-          <span class="block font-bold text-sm">Brand</span>
-          <span class="block text-xs text-ink/50 mt-0.5 font-mono">brand / demo1234</span>
+                class="text-left bg-paper/10 rounded-lg px-4 py-3 border border-paper/10 hover:border-ember/50 transition">
+          <span class="block font-bold text-sm text-paper">Brand</span>
+          <span class="block text-xs text-paper/50 mt-0.5 font-mono">brand / demo1234</span>
         </button>
         <button type="button" onclick="fill('creator')"
-                class="text-left bg-white rounded-2xl px-4 py-3 border border-black/5 hover:border-ink/20 transition">
-          <span class="block font-bold text-sm">Creator</span>
-          <span class="block text-xs text-ink/50 mt-0.5 font-mono">creator / demo1234</span>
+                class="text-left bg-paper/10 rounded-lg px-4 py-3 border border-paper/10 hover:border-ember/50 transition">
+          <span class="block font-bold text-sm text-paper">Creator</span>
+          <span class="block text-xs text-paper/50 mt-0.5 font-mono">creator / demo1234</span>
         </button>
       </div>
-      <p class="mt-3 text-xs text-ink/40">Click either to fill the form.</p>
+      <p class="mt-3 text-xs text-paper/40">Click either to fill the form.</p>
     </div>
   </div>
 </section>

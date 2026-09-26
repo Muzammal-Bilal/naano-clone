@@ -1,14 +1,16 @@
 """Public pages: the marketing site and the way in."""
 
 from django.contrib.auth import login
+from django.db.models import Sum
 from django.shortcuts import redirect, render
 
 from core.forms import SignupForm
-from core.models import Creator, compact
+from core.models import Booking, Creator, PostMetric, compact
+
 HOW_IT_WORKS = [
     {
         "title": "Find creators your buyers trust",
-        "body": "Filter 3,000+ vetted B2B voices by topic, country, audience size and price, "
+        "body": "Filter vetted B2B voices by topic, country, audience size and price, "
                 "then compare them on audience fit rather than follower count.",
     },
     {
@@ -34,70 +36,62 @@ HOW_IT_WORKS = [
 ]
 
 TESTIMONIAL = {
-    "quote": "We manage \u20ac10M+ of influence budget every year. For B2B, Naano simply "
-             "makes our life easier.",
-    "name": "David Zmirov",
-    "role": "CEO, Zmirov Communication",
-    "company": "Influence agency",
+    "quote": "We run seven-figure influence budgets. For B2B, Campfire is the first "
+             "tool that made creator ROI as clear as paid social.",
+    "name": "Amira Soltani",
+    "role": "Head of Growth",
+    "company": "Northline Software",
 }
 
-# Static previews for the feature-card mockups. Hard-coded rather than queried:
-# these illustrate what a screen looks like, so they should stay stable even when
-# the seeded data changes underneath them.
 FIT_PREVIEW = [("Eric", 92), ("Robin", 88), ("Aya", 84)]
 PIPELINE_PREVIEW = [
     ("Raphael", "Draft ready", "bg-amber-100 text-amber-800"),
-    ("Thomas", "Scheduled", "bg-sky-100 text-sky-800"),
+    ("Thomas", "Scheduled", "bg-ember/15 text-ember-deep"),
     ("Nada", "Live", "bg-emerald-100 text-emerald-800"),
 ]
 BAR_PREVIEW = [35, 52, 44, 68, 60, 82, 74, 100]
 
 CASE_STUDY = {
-    "brand": "BlogSEO",
-    "quote": "Naano became one of our fastest acquisition channels. We know exactly what "
+    "brand": "Atlas CRM",
+    "quote": "Campfire became one of our fastest acquisition channels. We know exactly what "
              "every creator brings.",
-    "name": "Vincent Josse",
-    "role": "CEO & Founder, BlogSEO",
-    "title": "How BlogSEO turned creator content into product signups",
-    "body": "BlogSEO briefed SEO and SaaS creators on LinkedIn, then traced every trial back "
-            "to the post that drove it.",
+    "name": "Jordan Hale",
+    "role": "CEO & Founder, Atlas CRM",
+    "title": "How Atlas CRM turned creator content into product signups",
+    "body": "Atlas briefed SaaS creators on LinkedIn, then traced every trial back "
+            "to the post that drove it — all inside Campfire.",
     "metrics": [("9", "creators activated"), ("2,940", "qualified clicks"), ("512", "trials started")],
 }
 
-# Sample published posts. These make the attribution story concrete: a reviewer
-# can see a post next to the numbers it produced without signing in first.
 EXAMPLE_POSTS = [
     {
-        "name": "Thomas Higad\u00e8re", "meta": "Creator \u00b7 B2B & AI \u00b7 34K followers",
+        "name": "Thomas Higadère", "meta": "Creator · B2B & AI · 34K followers",
         "text": "How AI changed our prospecting workflow for wealth managers and private bankers.",
-        "impressions": "42.8K", "clicks": "312", "leads": "18", "brand": "Zmirov",
+        "impressions": "42.8K", "clicks": "312", "leads": "18", "brand": "Northline",
     },
     {
-        "name": "Robin Tempe", "meta": "Creator \u00b7 Sales & AI \u00b7 12K followers",
+        "name": "Robin Tempe", "meta": "Creator · Sales & AI · 12K followers",
         "text": "I run my entire prospecting workflow through an AI. Here is how.",
-        "impressions": "9K", "clicks": "100", "leads": "50", "brand": "BlogSEO",
+        "impressions": "9K", "clicks": "100", "leads": "50", "brand": "Atlas CRM",
     },
     {
-        "name": "Eric Djavid", "meta": "Sales Leader \u00b7 B2B \u00b7 40K followers",
+        "name": "Eric Djavid", "meta": "Sales Leader · B2B · 40K followers",
         "text": "Most sales teams spend 80% of their time on the wrong leads. Here is how I changed that.",
-        "impressions": "20K", "clicks": "350", "leads": "80", "brand": "lemlist",
+        "impressions": "20K", "clicks": "350", "leads": "80", "brand": "Relay",
     },
     {
-        "name": "Marina Panova", "meta": "Content Creator \u00b7 B2B \u00b7 34K followers",
+        "name": "Marina Panova", "meta": "Content Creator · B2B · 34K followers",
         "text": "How I build my 30-day LinkedIn content system, the exact playbook.",
-        "impressions": "100K", "clicks": "1,600", "leads": "320", "brand": "folk.",
+        "impressions": "100K", "clicks": "1,600", "leads": "320", "brand": "Harbor",
     },
 ]
 
-# Pricing is presented, not transacted. The plans are real and the copy is
-# honest about what each includes; what is missing is a checkout, which is a
-# payments integration rather than a product decision.
 PLANS = [
     {
         "badge": "SELF-SERVE",
         "name": "Run it yourself.",
         "blurb": "For teams that want the infrastructure to run creator campaigns in-house.",
-        "price": "\u20ac0",
+        "price": "€0",
         "period": "/ month",
         "cta": "Start for free",
         "featured": False,
@@ -111,7 +105,7 @@ PLANS = [
     {
         "badge": "MANAGED CAMPAIGNS",
         "name": "Get your time back.",
-        "blurb": "For teams that want Naano to operate their creator channel end to end.",
+        "blurb": "For teams that want Campfire to operate their creator channel end to end.",
         "price": "Custom quote",
         "period": "",
         "cta": "Book a campaign call",
@@ -126,12 +120,12 @@ PLANS = [
 ]
 
 FAQS = [
-    ("What is Naano?",
+    ("What is Campfire?",
      "A B2B LinkedIn creator marketplace. Companies discover and book vetted creators "
      "for sponsored posts, each at a fixed price per post set by the creator. Audiences "
      "run from niche voices around 1,000 followers to established creators with several "
      "hundred thousand."),
-    ("How does Naano find the right creators?",
+    ("How does Campfire find the right creators?",
      "Every creator is scored against your ICP: the topics you sell into, the countries "
      "your buyers are in, and your budget. Results are ranked by that fit rather than by "
      "follower count, because a 2,000-follower voice speaking to your exact buyer beats a "
@@ -156,61 +150,46 @@ FAQS = [
 ]
 
 
-def _stat(value, label, style="compact"):
-    """A headline number the page counts up to.
-
-    `display` is the finished string rendered server-side, so the figure is
-    correct before Alpine loads and stays correct if it never does. It is
-    derived from `value` rather than written out, which keeps the animated
-    target and the static fallback from drifting apart.
-    """
+def _stat(value, label, style="compact", suffix=""):
+    """A headline number the page counts up to."""
     display = compact(value) if style == "compact" else f"{value:,}"
-    return {"value": value, "style": style, "display": f"{display}+", "label": label}
+    return {
+        "value": value,
+        "style": style,
+        "display": f"{display}{suffix}",
+        "label": label,
+    }
 
 
-# Wordmarks for the social-proof marquee. Naano shows real customer logos; these
-# are set as text because shipping other companies' trademarks into a clone is
-# not a thing to do casually.
-# The flag marks the customers with a published case study; those logos carry a
-# badge in the hero strip and link through, as on the live site.
 LOGOS = [
-    ("La Growth Machine", False), ("gojiberry", False), ("ChatSEO", True),
-    ("Abyssale", False), ("BlogSEO", True), ("lemlist", False), ("folk.", False),
+    ("Northline", False), ("Atlas CRM", True), ("Relay", False),
+    ("Harbor", False), ("Kinetic", True), ("Parcel", False), ("Lumen", False),
 ]
 
-# Audience makeup for the sample creator in the marketplace panel. The leading
-# entry is the headline match, the rest are the buyer roles behind it.
 AUDIENCE = [("AI & SaaS creator", "96%"), ("Founders", ""), ("Sales leaders", ""), ("GTM teams", "")]
 
-STATS = [
-    _stat(5_000_000, "Impressions generated"),
-    _stat(30_000, "Leads generated"),
-    _stat(2_000, "Creators on Naano", style="comma"),
-    _stat(5_000, "Posts published"),
-]
 
+def _live_stats():
+    """Headline figures from the database — not inflated marketing fiction."""
+    from django.db.models import Count
 
-def home(request):
-    """Public front door. Must look right to a signed-out visitor."""
-    # A showcase, not a ranking: spread across follower sizes so the strip reads
-    # like the marketplace rather than like six versions of the same creator.
-    creators = Creator.objects.prefetch_related("topics").order_by("-followers")[:6]
-
-    return render(request, "public/home.html", {
-        "creators": creators,
-        "steps": HOW_IT_WORKS,
-        "stats": STATS,
-        "logos": LOGOS,
-        "audience": AUDIENCE,
-        "testimonial": TESTIMONIAL,
-        "fit_preview": FIT_PREVIEW,
-        "pipeline_preview": PIPELINE_PREVIEW,
-        "bar_preview": BAR_PREVIEW,
-        "case_study": CASE_STUDY,
-        "posts": EXAMPLE_POSTS,
-        "plans": PLANS,
-        "faqs": FAQS,
-    })
+    creators = Creator.objects.count()
+    posts_live = Booking.objects.filter(status__in=["live", "completed"]).count()
+    aggregates = PostMetric.objects.aggregate(
+        impressions=Sum("impressions"),
+        leads=Sum("leads"),
+    )
+    impressions = aggregates["impressions"] or 0
+    leads = aggregates["leads"] or 0
+    countries = (
+        Creator.objects.values("country").annotate(n=Count("id")).count()
+    )
+    return [
+        _stat(impressions, "Impressions in demo data"),
+        _stat(leads, "Leads attributed"),
+        _stat(creators, "Creators on Campfire", style="comma"),
+        _stat(posts_live, "Posts live or completed", style="comma"),
+    ], countries
 
 
 CREATOR_FEATURES = [
@@ -225,23 +204,23 @@ CREATOR_FEATURES = [
 ]
 
 CREATOR_TESTIMONIALS = [
-    ("Naano is the marketplace LinkedIn was missing. The founders truly listen and do "
-     "everything they can to build something that brings real value to its users.", "Yasmin Mwangi"),
+    ("Campfire is the marketplace LinkedIn was missing. Clear briefs, fair rates, "
+     "and brands that actually match my audience.", "Yasmin Mwangi"),
     ("At first I wasn't sure what to expect. But the whole experience was simple and smooth: "
      "clear opportunities, an easy platform, everything well guided.", "Daniel Fischer"),
-    ("Excellent experience. The platform is simple and efficient, the team ultra-responsive, "
-     "and results come fast.", "Camille Rossi"),
-    ("Great experience, I love the platform, it helps me every day. I already made money with "
-     "it from day one.", "Raghav Vasquez"),
-    ("Naano lets me keep making useful content while monetizing my LinkedIn community.", "Nada Rossi"),
-    ("A young team that's ambitious, efficient and driven. I'd tell every creator to join.", "Felix Djavid"),
+    ("Excellent experience. The platform is simple and efficient, and results come fast.",
+     "Camille Rossi"),
+    ("Great experience — I already made money from day one.", "Raghav Vasquez"),
+    ("Campfire lets me keep making useful content while monetizing my LinkedIn community.",
+     "Nada Rossi"),
+    ("I'd tell every B2B creator to join.", "Felix Djavid"),
 ]
 
 CREATOR_FAQS = [
-    ("What is Naano?",
+    ("What is Campfire?",
      "A B2B LinkedIn creator marketplace. Brands book creators for sponsored posts at a fixed "
      "price per post that you set yourself."),
-    ("Is Naano free for creators?",
+    ("Is Campfire free for creators?",
      "Yes. Joining costs nothing and you keep what you charge. Brands pay for the campaign."),
     ("How much can I earn?",
      "You set your own price per post. What a brand will pay tracks how well your audience "
@@ -251,7 +230,7 @@ CREATOR_FAQS = [
      "goes live. You never raise an invoice."),
     ("Do I have to sign an exclusivity contract?",
      "No. You can take deals from anyone, and you can decline any deal without explanation."),
-    ("What kind of brands are on Naano?",
+    ("What kind of brands are on Campfire?",
      "B2B software, agencies and services selling to founders, GTM teams and technical buyers."),
     ("Do I keep control of my content?",
      "Always. The brief sets the objective and the things not to say; the words stay yours, "
@@ -279,6 +258,30 @@ AGENCY_TRACKS = [
         "featured": False,
     },
 ]
+
+
+def home(request):
+    """Public front door. Must look right to a signed-out visitor."""
+    creators = Creator.objects.prefetch_related("topics").order_by("-followers")[:6]
+    stats, country_count = _live_stats()
+
+    return render(request, "public/home.html", {
+        "creators": creators,
+        "steps": HOW_IT_WORKS,
+        "stats": stats,
+        "country_count": country_count,
+        "creator_count": Creator.objects.count(),
+        "logos": LOGOS,
+        "audience": AUDIENCE,
+        "testimonial": TESTIMONIAL,
+        "fit_preview": FIT_PREVIEW,
+        "pipeline_preview": PIPELINE_PREVIEW,
+        "bar_preview": BAR_PREVIEW,
+        "case_study": CASE_STUDY,
+        "posts": EXAMPLE_POSTS,
+        "plans": PLANS,
+        "faqs": FAQS,
+    })
 
 
 def creators_page(request):

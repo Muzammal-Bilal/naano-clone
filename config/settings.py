@@ -1,4 +1,4 @@
-"""Django settings for the naano clone.
+"""Django settings for Campfire.
 
 Single service: Django renders HTML server-side, WhiteNoise serves static files,
 Postgres in production and SQLite locally. Configuration comes from the

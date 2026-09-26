@@ -1,4 +1,4 @@
-{% comment %}
+﻿{% comment %}
 The result count lives inside the swapped region on purpose. Left in the parent
 template it kept showing the unfiltered total after an HTMX swap.
 {% endcomment %}
@@ -19,21 +19,21 @@ template it kept showing the unfiltered total after an HTMX swap.
     <div class="mt-10 flex items-center justify-center gap-2">
       {% if page_obj.has_previous %}
         <button name="page" value="{{ page_obj.previous_page_number }}"
-                class="px-5 py-2.5 rounded-full border border-black/10 font-semibold text-sm hover:bg-black/5 transition">
+                class="px-5 py-2.5 rounded-lg border border-black/10 font-semibold text-sm hover:bg-black/5 transition">
           Previous
         </button>
       {% endif %}
       <span class="px-4 text-sm text-ink/55">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
       {% if page_obj.has_next %}
         <button name="page" value="{{ page_obj.next_page_number }}"
-                class="px-5 py-2.5 rounded-full border border-black/10 font-semibold text-sm hover:bg-black/5 transition">
+                class="px-5 py-2.5 rounded-lg border border-black/10 font-semibold text-sm hover:bg-black/5 transition">
           Next
         </button>
       {% endif %}
     </div>
   {% endif %}
 {% else %}
-  <div class="bg-white rounded-3xl border border-black/5 py-20 text-center">
+  <div class="bg-white rounded-xl border border-black/5 py-20 text-center">
     <p class="text-lg font-bold">No creators match those filters.</p>
     <p class="mt-2 text-ink/50">Try widening the price range or removing a topic.</p>
   </div>

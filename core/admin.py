@@ -42,4 +42,4 @@ class TransactionAdmin(admin.ModelAdmin):
 
 
 admin.site.register([Topic, PostMetric])
-admin.site.site_header = "Naano admin"
+admin.site.site_header = "Campfire admin"

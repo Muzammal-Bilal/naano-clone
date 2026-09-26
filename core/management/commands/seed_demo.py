@@ -129,7 +129,7 @@ class Command(BaseCommand):
             handle = slugify(name)
             user = User.objects.create(
                 username=handle,
-                email=f"{handle}@creators.naano.demo",
+                email=f"{handle}@creators.campfire.demo",
                 password=password,
                 first_name=name.split()[0],
                 last_name=name.split()[1],
@@ -164,7 +164,7 @@ class Command(BaseCommand):
         # A known login so a reviewer can see the creator side without signing up.
         demo = creators[0]
         demo.user.username = "creator"
-        demo.user.email = "creator@demo.naano"
+        demo.user.email = "creator@demo.campfire"
         demo.user.save(update_fields=["username", "email"])
 
         return creators
@@ -172,7 +172,7 @@ class Command(BaseCommand):
     def _brand(self, topics):
         user = User.objects.create(
             username="brand",
-            email="brand@demo.naano",
+            email="brand@demo.campfire",
             password=make_password(DEMO_PASSWORD),
             first_name="Vincent",
             last_name="Josse",

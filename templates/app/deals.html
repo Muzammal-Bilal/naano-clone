@@ -1,9 +1,9 @@
-{% extends "app/base_app.html" %}
-{% block title %}Your deals | Naano{% endblock %}
+﻿{% extends "app/base_app.html" %}
+{% block title %}Your deals | Campfire{% endblock %}
 
 {% block app %}
 <div class="mx-auto max-w-5xl px-5 py-10">
-  <h1 class="text-4xl font-extrabold tracking-[-0.03em]">Your deals.</h1>
+  <h1 class="text-4xl font-bold tracking-tight">Your deals.</h1>
   <p class="mt-2 text-ink/55">Accept the ones that fit your audience. Skip the rest, no penalty.</p>
 
   {% if invited %}
@@ -18,7 +18,7 @@
     {% for booking in active %}
       {% include "partials/deal_row.html" %}
     {% empty %}
-      <div class="bg-white rounded-3xl border border-black/5 py-14 text-center">
+      <div class="bg-white rounded-xl border border-black/5 py-14 text-center">
         <p class="font-bold">Nothing in progress.</p>
         <p class="mt-1.5 text-sm text-ink/50">Accepted deals will show up here.</p>
       </div>
