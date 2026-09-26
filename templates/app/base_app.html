@@ -35,7 +35,7 @@
     {% block app %}{% endblock %}
   </div>
 
-  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 flex bg-paper/95 backdrop-blur border-t border-ink/10"
+  <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 flex bg-paper/95 backdrop-blur border-t-2 border-ember/30 shadow-[0_-8px_24px_-12px_rgba(18,20,26,0.2)]"
        aria-label="Sections">
     {% if user.creator %}
       <a href="{% url 'creator_deals' %}" {% if nav == 'deals' %}aria-current="page"{% endif %}

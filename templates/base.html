@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Campfire — B2B LinkedIn Creator Marketplace{% endblock %}</title>
   <meta name="description" content="{% block description %}Discover creators your buyers already trust, brief campaigns in minutes, and track the pipeline every post creates.{% endblock %}">
+  <meta name="theme-color" content="#E85D04">
+  <meta name="htmx-config" content='{"defaultIndicator":"#htmx-progress"}'>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 4c2.8 4.2 7.2 7.4 7.2 13.2 0 5.2-3.2 9-7.2 9s-7.2-3.8-7.2-9C12.8 11.4 17.2 8.2 20 4Z' fill='%23E85D04'/%3E%3Cpath d='M20 11c1.4 2.2 3.6 3.8 3.6 6.8 0 2.6-1.5 4.4-3.6 4.4s-3.6-1.8-3.6-4.4c0-3 2.2-4.6 3.6-6.8Z' fill='%23FFB703'/%3E%3Crect x='8' y='30' width='24' height='4.5' rx='2.2' transform='rotate(-12 20 32.25)' fill='%235C4033'/%3E%3Crect x='8' y='30' width='24' height='4.5' rx='2.2' transform='rotate(12 20 32.25)' fill='%237A5230'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,10 +145,23 @@
     @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
 
     .htmx-swapping { opacity: 0.45; transition: opacity 120ms ease; }
+
+    /* Thin progress bar while HTMX requests run */
+    #htmx-progress {
+      position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 100;
+      background: linear-gradient(90deg, #E85D04, #FF8A3D);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 200ms ease, opacity 200ms ease;
+      opacity: 0; pointer-events: none;
+    }
+    #htmx-progress.htmx-request {
+      opacity: 1; transform: scaleX(0.7); transition: transform 4s ease;
+    }
   </style>
   {% block head_extra %}{% endblock %}
 </head>
 <body class="font-sans text-ink antialiased bg-paper">
+  <div id="htmx-progress" class="htmx-indicator"></div>
 
   <header class="sticky top-0 z-50 bg-paper/90 backdrop-blur-md border-b border-ink/8">
     <nav class="mx-auto max-w-7xl px-5 h-[72px] flex items-center justify-between">

@@ -9,29 +9,29 @@
   <p class="mt-2 text-ink/55">Every post carries a tracked link, so spend maps to a creator.</p>
 
   <div class="mt-8 grid grid-cols-2 lg:grid-cols-5 gap-4">
-    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift card-hover p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">IMPRESSIONS</p>
       <p class="mt-1.5 text-3xl font-bold tabular-nums text-ember"
          x-data="countUp({{ totals.impressions }})" x-text="text">{{ totals.impressions|intcomma }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift card-hover p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">CLICKS</p>
       <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.clicks }})" x-text="text">{{ totals.clicks|intcomma }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift card-hover p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">CTR</p>
       <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.ctr }}, 'rate', '%')" x-text="text">{{ totals.ctr }}%</p>
     </div>
-    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift card-hover p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">LEADS</p>
       <p class="mt-1.5 text-3xl font-bold tabular-nums"
          x-data="countUp({{ totals.leads }})" x-text="text">{{ totals.leads|intcomma }}</p>
     </div>
-    <div class="bg-white rounded-xl border border-ink/8 card-lift p-6">
+    <div class="bg-white rounded-xl border border-ink/8 card-lift card-hover p-6">
       <p class="text-[10px] font-bold tracking-widest text-ink/40">PIPELINE</p>
-      <p class="mt-1.5 text-3xl font-bold tabular-nums"
+      <p class="mt-1.5 text-3xl font-bold tabular-nums text-ember"
          x-data="countUp({{ totals.pipeline|floatformat:'0' }}, 'euro')"
          x-text="text">&euro;{{ totals.pipeline|floatformat:0|intcomma }}</p>
     </div>
